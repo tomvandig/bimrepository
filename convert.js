@@ -110,6 +110,7 @@ function genPropertyExportCode(name, property)
     if (property.type === "array")
     {
         return `
+            // property ${name}
             componentObj.data.push(TokenType.ArrayStart);
             this.${name}.forEach((item) => componentObj.data.push(item));
             componentObj.data.push(TokenType.ArrayEnd);
@@ -118,13 +119,14 @@ function genPropertyExportCode(name, property)
     else if (property.type === "number")
     {
         return `
+            // property ${name}
             componentObj.data.push(TokenType.Number);
             componentObj.data.push(this.${name});
         `;
     }
     else
     {
-        return `<unknown property type ${property.type}`;
+        return `<unknown property type ${property.type} for prop ${name}`;
     }
 }
 
