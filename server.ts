@@ -18,14 +18,12 @@ function toArrayBuffer(buffer) {
 
 app.post('/commit', (req, res) => {
     let buf = toArrayBuffer(req.body);
-    console.log(req.body);
-    console.log(buf);
-
     
     let commitProposal = new CommitProposalT();
     CommitProposal.getRootAsCommitProposal(new ByteBuffer(buf)).unpackTo(commitProposal);
 
     console.log(commitProposal);
+    console.log(JSON.stringify(commitProposal, null, 4));
 
     res.send('POST request to the homepage')
 })
