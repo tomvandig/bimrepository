@@ -1,6 +1,4 @@
 
-// example IDL file
-
 namespace bimrepo;
 
 enum PropertyType : byte { Number = 1, Array }

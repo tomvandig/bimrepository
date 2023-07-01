@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "genfb": "flatc.exe --ts --gen-object-api ./flatbuffers/schema.fbs"
+    "genfb": "flatc.exe --ts --gen-object-api ./flatbuffers/schema.fbs ./flatbuffers/component.fbs"
   },
   "dependencies": {
     "cli-highlight": "^2.1.11",

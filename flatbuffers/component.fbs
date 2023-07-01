@@ -1,0 +1,11 @@
+
+namespace bimrepo;
+
+enum TokenType : byte { Number = 1, ArrayStart, ArrayEnd }
+
+table Component {
+    type: [string];
+    data: [uint8];
+}
+
+root_type Component;

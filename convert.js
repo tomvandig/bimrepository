@@ -105,6 +105,44 @@ function genSchemaExportCode(schema)
     `
 }
 
+function genPropertyExportCode(name, property)
+{
+    if (property.type === "array")
+    {
+        return `
+            componentObj.data.push(TokenType.ArrayStart);
+            this.${name}.forEach((item) => componentObj.data.push(item));
+            componentObj.data.push(TokenType.ArrayEnd);
+        `;
+    }
+    else if (property.type === "number")
+    {
+        return `
+            componentObj.data.push(TokenType.Number);
+            componentObj.data.push(this.${name});
+        `;
+    }
+    else
+    {
+        return `<unknown property type ${property.type}`;
+    }
+}
+
+function genComponentExportCode(schema)
+{
+    return `
+    exportToDataArray(builder: flatbuffers.Builder){
+        let componentObj = new ComponentT();
+
+        componentObj.type = [${schema["$id"].map(e => `"${e}"`).join(",")}];
+
+        ${Object.keys(schema.shape).map(prop => genPropertyExportCode(prop, schema.shape[prop])).join("\n")}
+        
+        Component.finishComponentBuffer(builder, componentObj.pack(builder));
+    }
+    `
+}
+
 function genClass(schema)
 {
     console.log(schema);
@@ -126,9 +164,7 @@ function genClass(schema)
                 return false;
             }
 
-            exportToDataArray(builder: flatbuffers.Builder){
-
-            }
+            ${genComponentExportCode(schema)}
             // end methods
 
             // statics
@@ -161,7 +197,9 @@ function convert(path)
         `import { shapeT } from '../bimrepo/shape';`,
         `import { propertyT } from '../bimrepo/property';`,
         `import { ItemsT } from '../bimrepo/items';`,
-        `import { PropertyType } from '../bimrepo/property-type';`
+        `import { PropertyType } from '../bimrepo/property-type';`,
+        `import { Component, ComponentT } from '../bimrepo/component';`,
+        `import { TokenType } from '../bimrepo/token-type';`,
     ].join("\n");
     let header = `\n/*\n${JSON.stringify(schema, null, 4)}\n*/\n\n${fbimports}\n`;
     let output = `${header}\n${genClass(schema)}`;
