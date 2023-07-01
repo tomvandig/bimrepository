@@ -52,15 +52,15 @@ export default class ClientLedger {
 
         CommitProposal.finishCommitProposalBuffer(fbb, commit.pack(fbb));
 
-        let requestBuffer = fbb.asUint8Array();
+        let requestBuffer = fbb.asUint8Array().slice(0);
 
-        console.log(requestBuffer);
-
-        let response = await axios.post(`${this.address}/commit`, {
-            data: requestBuffer
+        let response = await axios.post(`${this.address}/commit`, 
+            requestBuffer.buffer
+        , {
+            headers: {'Content-Type': 'application/octet-stream'},
         });
 
-        console.log(response);
+        console.log(response.data);
     }
 
 
