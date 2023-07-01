@@ -208,7 +208,7 @@ function genClass(schema)
     let name = id[id.length - 1];
     let code =  dedent`
         ${comment ? `// ${comment}` : ""}
-        export class ${name} {
+        export class ${name} extends ECSComponent {
             
             // properties
             ${Object.keys(schema.shape).map(prop => genProp(prop, schema.shape[prop])).join("\n")}
@@ -253,6 +253,8 @@ function convert(path)
         `import { PropertyType } from '../bimrepo/property-type';`,
         `import { Component, ComponentT } from '../bimrepo/component';`,
         `import { TokenType } from '../bimrepo/token-type';`,
+        `import { ECSComponent } from '../ecs';`
+
     ].join("\n");
     let header = `\n/*\n${JSON.stringify(schema, null, 4)}\n*/\n\n${fbimports}\n`;
     let output = `${header}\n${genClass(schema)}`;
