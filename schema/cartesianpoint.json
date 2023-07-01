@@ -1,0 +1,14 @@
+{
+    "$id": ["ifc2x3", "cartesianpoint"],
+    "$schemaversion": "1",
+    "$comment": "TODO: fix",
+    "description": "Cartesianpoint of ifc version 2x3",
+    "shape": {
+        "points": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        }
+    }
+}
