@@ -1,9 +1,10 @@
 {
   "scripts": {
-    "genfb": "flatc.exe --ts --gen-object-api ./flatbuffers/schema.fbs ./flatbuffers/component.fbs",
-    "test": "esbuild test.ts --bundle --outfile=bundle.js && node bundle.js"
+    "genfb": "flatc.exe --ts --gen-object-api ./flatbuffers/schema.fbs ./flatbuffers/component.fbs ./flatbuffers/commit.fbs",
+    "test": "esbuild test.ts --bundle  --platform=node --outfile=bundle.js && node bundle.js"
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "cli-highlight": "^2.1.11",
     "dedent": "^0.7.0",
     "esbuild": "^0.18.11",

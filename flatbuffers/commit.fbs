@@ -1,0 +1,18 @@
+
+include "component.fbs";
+include "schema.fbs";
+
+namespace bimrepo;
+
+table CommitDiff {
+    updated_components: [Component];
+    updated_schemas: [Schema];
+}
+
+table CommitProposal {
+    author: string;
+    message: string;
+    diff: CommitDiff;
+}
+
+root_type CommitProposal;

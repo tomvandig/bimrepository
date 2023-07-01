@@ -91,7 +91,7 @@ function genSchemaShapeCode(shape)
 function genSchemaExportCode(schema)
 {
     return `
-    static exportDefinitionToArray(builder: flatbuffers.Builder) {
+    exportDefinitionToArray(): SchemaT {
         let schemaObj = new SchemaT();
         schemaObj.id = [${schema["$id"].map(e => `"${e}"`).join(",")}];
         schemaObj.schemaversion = "${schema["$schemaversion"]}";
@@ -100,7 +100,7 @@ function genSchemaExportCode(schema)
 
         ${genSchemaShapeCode(schema.shape)}
 
-        Schema.finishSchemaBuffer(builder, schemaObj.pack(builder));
+        return schemaObj;
     }
     `
 }
@@ -134,14 +134,14 @@ function genPropertyExportCode(name, property)
 function genComponentExportCode(schema)
 {
     return `
-    exportToDataArray(builder: flatbuffers.Builder){
+    exportToDataArray(): ComponentT {
         let componentObj = new ComponentT();
 
         componentObj.type = [${schema["$id"].map(e => `"${e}"`).join(",")}];
 
         ${Object.keys(schema.shape).map(prop => genPropertyExportCode(prop, schema.shape[prop])).join("\n")}
         
-        Component.finishComponentBuffer(builder, componentObj.pack(builder));
+        return componentObj;
     }
     `
 }
@@ -209,6 +209,10 @@ function genClass(schema)
     let code =  dedent`
         ${comment ? `// ${comment}` : ""}
         export class ${name} extends ECSComponent {
+
+            constructor() {
+                super("${id.join("_")}");
+            }
             
             // properties
             ${Object.keys(schema.shape).map(prop => genProp(prop, schema.shape[prop])).join("\n")}
@@ -220,12 +224,11 @@ function genClass(schema)
             }
 
             ${genComponentExportCode(schema)}
+            ${genSchemaExportCode(schema)}
             // end methods
 
             // statics
             ${genComponentImportCode(name, schema)}
-            
-            ${genSchemaExportCode(schema)}
             // end statics
         }
     `;
