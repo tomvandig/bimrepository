@@ -112,6 +112,7 @@ function genPropertyExportCode(name, property)
         return `
             // property ${name}
             componentObj.data.push(TokenType.ArrayStart);
+            componentObj.data.push(this.${name}.length);
             this.${name}.forEach((item) => componentObj.data.push(item));
             componentObj.data.push(TokenType.ArrayEnd);
         `;
@@ -145,6 +146,54 @@ function genComponentExportCode(schema)
     `
 }
 
+function genPropertyImportCode(name, property)
+{
+    if (property.type === "array")
+    {
+        return `
+            // property ${name}
+            if (componentObj.data.shift() != TokenType.ArrayStart) throw new Error("Expected ArrayStart");
+            let count = componentObj.data.shift()!;
+            for (let i = 0; i < count; i++)
+            {
+                obj.${name}.push(componentObj.data.shift()!);
+            }
+            if (componentObj.data.shift() != TokenType.ArrayEnd) throw new Error("Expected ArrayEnd");
+        `;
+    }
+    else if (property.type === "number")
+    {
+        return `
+            // property ${name}
+            if (componentObj.data.shift() != TokenType.Number) throw new Error("Expected number");
+            obj.${name} = componentObj.data.shift()!;
+        `;
+    }
+    else
+    {
+        return `<unknown property type ${property.type} for prop ${name}`;
+    }
+}
+
+function genComponentImportCode(name, schema)
+{
+    return `
+    
+    static buildFromDataArray(buf: flatbuffers.ByteBuffer): ${name} {
+        let componentObj = new ComponentT();
+        Component.getRootAsComponent(buf).unpackTo(componentObj);
+
+        // TODO: check if component type matches the class
+
+        let obj = new ${name}();
+        
+        ${Object.keys(schema.shape).map(prop => genPropertyImportCode(prop, schema.shape[prop])).join("\n")}
+
+        return obj;
+    }
+    `
+}
+
 function genClass(schema)
 {
     console.log(schema);
@@ -170,9 +219,7 @@ function genClass(schema)
             // end methods
 
             // statics
-            static buildFromDataArray(buf: flatbuffers.ByteBuffer): ${name} {
-                return new ${name}();
-            }
+            ${genComponentImportCode(name, schema)}
             
             ${genSchemaExportCode(schema)}
             // end statics
