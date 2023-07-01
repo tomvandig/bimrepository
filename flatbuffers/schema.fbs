@@ -1,0 +1,30 @@
+
+// example IDL file
+
+namespace bimrepo;
+
+enum PropertyType : byte { Number = 1, Array }
+
+table Items {
+    type: PropertyType = Number;
+}
+
+table property {
+    name: string;
+    type: PropertyType = Number;
+    items: Items;
+}
+
+table shape {
+    properties: [property];
+}
+
+table Schema {
+    id: [string];
+    schemaversion: string;
+    comment: string;
+    description: string;
+    schema_shape: shape;
+}
+
+root_type Schema;
