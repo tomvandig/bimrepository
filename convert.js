@@ -152,21 +152,25 @@ function genPropertyImportCode(name, property)
     {
         return `
             // property ${name}
-            if (componentObj.data.shift() != TokenType.ArrayStart) throw new Error("Expected ArrayStart");
-            let count = componentObj.data.shift()!;
-            for (let i = 0; i < count; i++)
             {
-                obj.${name}.push(componentObj.data.shift()!);
+                if (componentObj.data.shift() != TokenType.ArrayStart) throw new Error("Expected ArrayStart");
+                let count = componentObj.data.shift()!;
+                for (let i = 0; i < count; i++)
+                {
+                    obj.${name}.push(componentObj.data.shift()!);
+                }
+                if (componentObj.data.shift() != TokenType.ArrayEnd) throw new Error("Expected ArrayEnd");
             }
-            if (componentObj.data.shift() != TokenType.ArrayEnd) throw new Error("Expected ArrayEnd");
         `;
     }
     else if (property.type === "number")
     {
         return `
             // property ${name}
-            if (componentObj.data.shift() != TokenType.Number) throw new Error("Expected number");
-            obj.${name} = componentObj.data.shift()!;
+            {
+                if (componentObj.data.shift() != TokenType.Number) throw new Error("Expected number");
+                obj.${name} = componentObj.data.shift()!;
+            }
         `;
     }
     else
@@ -179,7 +183,7 @@ function genComponentImportCode(name, schema)
 {
     return `
     
-    static buildFromDataArray(buf: flatbuffers.ByteBuffer): ${name} {
+    static importFromDataArray(buf: flatbuffers.ByteBuffer): ${name} {
         let componentObj = new ComponentT();
         Component.getRootAsComponent(buf).unpackTo(componentObj);
 
@@ -257,7 +261,7 @@ function convert(path)
 
     console.log(cliOutput);
 
-    fs.writeFileSync("./output/out.ts", output);
+    fs.writeFileSync(`./output/${schema.$id.join("_")}.ts`, output);
 }
 
 convert("./schema/cartesianpoint.json");
