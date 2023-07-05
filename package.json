@@ -2,7 +2,7 @@
   "scripts": {
     "genfb": "flatc.exe --ts --gen-object-api ./flatbuffers/schema.fbs ./flatbuffers/component.fbs ./flatbuffers/commit.fbs",
     "test": "esbuild test.ts --bundle  --platform=node --outfile=bundle.js && node bundle.js",
-    "serve": "esbuild server.ts --bundle  --platform=node --outfile=bundle_serve.js && node bundle_serve.js"
+    "serve": "esbuild api.ts --bundle  --platform=node --outfile=bundle_serve.js && node bundle_serve.js"
   },
   "dependencies": {
     "axios": "^1.4.0",

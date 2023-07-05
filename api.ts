@@ -1,9 +1,12 @@
 import { ByteBuffer } from "flatbuffers";
 import { CommitProposal, CommitProposalT } from "./bimrepo";
+import { ServerLedger } from "./server_ledger";
 
 const express = require('express')
 const app = express()
 const port = 3000
+
+let ledger = new ServerLedger();
 
 app.use(express.raw());
 
@@ -24,6 +27,8 @@ app.post('/commit', (req, res) => {
 
     console.log(commitProposal);
     console.log(JSON.stringify(commitProposal, null, 4));
+
+    ledger.Commit(commitProposal);
 
     res.send('POST request to the homepage')
 })
