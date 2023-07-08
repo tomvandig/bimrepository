@@ -3,9 +3,10 @@
 export { CommitDiff, CommitDiffT } from './bimrepo/commit-diff.js';
 export { CommitProposal, CommitProposalT } from './bimrepo/commit-proposal.js';
 export { Component, ComponentT } from './bimrepo/component.js';
+export { ComponentData, ComponentDataT } from './bimrepo/component-data.js';
+export { ComponentDataType } from './bimrepo/component-data-type.js';
 export { Items, ItemsT } from './bimrepo/items.js';
 export { PropertyType } from './bimrepo/property-type.js';
 export { Schema, SchemaT } from './bimrepo/schema.js';
-export { TokenType } from './bimrepo/token-type.js';
 export { property, propertyT } from './bimrepo/property.js';
 export { shape, shapeT } from './bimrepo/shape.js';

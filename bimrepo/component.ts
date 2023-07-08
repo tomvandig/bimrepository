@@ -2,6 +2,7 @@
 
 import * as flatbuffers from 'flatbuffers';
 
+import { ComponentData, ComponentDataT } from '../bimrepo/component-data.js';
 
 
 export class Component implements flatbuffers.IUnpackableObject<ComponentT> {
@@ -22,39 +23,43 @@ static getSizePrefixedRootAsComponent(bb:flatbuffers.ByteBuffer, obj?:Component)
   return (obj || new Component()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 }
 
+entity():number {
+  const offset = this.bb!.__offset(this.bb_pos, 4);
+  return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
+}
+
 type(index: number):string
 type(index: number,optionalEncoding:flatbuffers.Encoding):string|Uint8Array
 type(index: number,optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 4);
+  const offset = this.bb!.__offset(this.bb_pos, 6);
   return offset ? this.bb!.__string(this.bb!.__vector(this.bb_pos + offset) + index * 4, optionalEncoding) : null;
 }
 
 typeLength():number {
-  const offset = this.bb!.__offset(this.bb_pos, 4);
+  const offset = this.bb!.__offset(this.bb_pos, 6);
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 }
 
-data(index: number):number|null {
-  const offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? this.bb!.readUint8(this.bb!.__vector(this.bb_pos + offset) + index) : 0;
+data(index: number, obj?:ComponentData):ComponentData|null {
+  const offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? (obj || new ComponentData()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 }
 
 dataLength():number {
-  const offset = this.bb!.__offset(this.bb_pos, 6);
+  const offset = this.bb!.__offset(this.bb_pos, 8);
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 }
 
-dataArray():Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? new Uint8Array(this.bb!.bytes().buffer, this.bb!.bytes().byteOffset + this.bb!.__vector(this.bb_pos + offset), this.bb!.__vector_len(this.bb_pos + offset)) : null;
+static startComponent(builder:flatbuffers.Builder) {
+  builder.startObject(3);
 }
 
-static startComponent(builder:flatbuffers.Builder) {
-  builder.startObject(2);
+static addEntity(builder:flatbuffers.Builder, entity:number) {
+  builder.addFieldInt32(0, entity, 0);
 }
 
 static addType(builder:flatbuffers.Builder, typeOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(0, typeOffset, 0);
+  builder.addFieldOffset(1, typeOffset, 0);
 }
 
 static createTypeVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
@@ -70,19 +75,19 @@ static startTypeVector(builder:flatbuffers.Builder, numElems:number) {
 }
 
 static addData(builder:flatbuffers.Builder, dataOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(1, dataOffset, 0);
+  builder.addFieldOffset(2, dataOffset, 0);
 }
 
-static createDataVector(builder:flatbuffers.Builder, data:number[]|Uint8Array):flatbuffers.Offset {
-  builder.startVector(1, data.length, 1);
+static createDataVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
+  builder.startVector(4, data.length, 4);
   for (let i = data.length - 1; i >= 0; i--) {
-    builder.addInt8(data[i]!);
+    builder.addOffset(data[i]!);
   }
   return builder.endVector();
 }
 
 static startDataVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(1, numElems, 1);
+  builder.startVector(4, numElems, 4);
 }
 
 static endComponent(builder:flatbuffers.Builder):flatbuffers.Offset {
@@ -98,8 +103,9 @@ static finishSizePrefixedComponentBuffer(builder:flatbuffers.Builder, offset:fla
   builder.finish(offset, undefined, true);
 }
 
-static createComponent(builder:flatbuffers.Builder, typeOffset:flatbuffers.Offset, dataOffset:flatbuffers.Offset):flatbuffers.Offset {
+static createComponent(builder:flatbuffers.Builder, entity:number, typeOffset:flatbuffers.Offset, dataOffset:flatbuffers.Offset):flatbuffers.Offset {
   Component.startComponent(builder);
+  Component.addEntity(builder, entity);
   Component.addType(builder, typeOffset);
   Component.addData(builder, dataOffset);
   return Component.endComponent(builder);
@@ -107,30 +113,34 @@ static createComponent(builder:flatbuffers.Builder, typeOffset:flatbuffers.Offse
 
 unpack(): ComponentT {
   return new ComponentT(
+    this.entity(),
     this.bb!.createScalarList<string>(this.type.bind(this), this.typeLength()),
-    this.bb!.createScalarList<number>(this.data.bind(this), this.dataLength())
+    this.bb!.createObjList<ComponentData, ComponentDataT>(this.data.bind(this), this.dataLength())
   );
 }
 
 
 unpackTo(_o: ComponentT): void {
+  _o.entity = this.entity();
   _o.type = this.bb!.createScalarList<string>(this.type.bind(this), this.typeLength());
-  _o.data = this.bb!.createScalarList<number>(this.data.bind(this), this.dataLength());
+  _o.data = this.bb!.createObjList<ComponentData, ComponentDataT>(this.data.bind(this), this.dataLength());
 }
 }
 
 export class ComponentT implements flatbuffers.IGeneratedObject {
 constructor(
+  public entity: number = 0,
   public type: (string)[] = [],
-  public data: (number)[] = []
+  public data: (ComponentDataT)[] = []
 ){}
 
 
 pack(builder:flatbuffers.Builder): flatbuffers.Offset {
   const type = Component.createTypeVector(builder, builder.createObjectOffsetList(this.type));
-  const data = Component.createDataVector(builder, this.data);
+  const data = Component.createDataVector(builder, builder.createObjectOffsetList(this.data));
 
   return Component.createComponent(builder,
+    this.entity,
     type,
     data
   );

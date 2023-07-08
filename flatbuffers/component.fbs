@@ -1,11 +1,21 @@
 
 namespace bimrepo;
 
-enum TokenType : byte { Number = 1, ArrayStart, ArrayEnd }
+enum ComponentDataType: byte { Number, String, ArrayStart, ArrayEnd }
+
+// fb guarantees you don't pay for unset table members
+table ComponentData
+{
+    type: ComponentDataType;
+    array_length: int32;
+    num: int32;
+    str: string;
+}
 
 table Component {
+    entity: uint32;
     type: [string];
-    data: [uint8];
+    data: [ComponentData];
 }
 
 root_type Component;
