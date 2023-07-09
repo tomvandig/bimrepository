@@ -10,6 +10,14 @@ export class ServerLedger
     private components: Map<number, Map<string, ComponentT>>;
     private types: Map<string, SchemaT>;
 
+    constructor()
+    {
+        this.types = new Map();
+        this.components = new Map();
+        this.commits = [];
+        this.listeners = new Map();
+    }
+
     private ComponentTypeAsString(type: string[])
     {
         return type.join("_");
@@ -68,9 +76,9 @@ export class ServerLedger
     public Commit(proposal: CommitProposalT)
     {
         // process data
-        proposal.diff?.updatedSchemas.forEach(this.UpdateType);
-        proposal.diff?.updatedComponents.forEach(this.ValidateComponent);
-        proposal.diff?.updatedComponents.forEach(this.UpdateComponent);
+        proposal.diff?.updatedSchemas.forEach(this.UpdateType.bind(this));
+        proposal.diff?.updatedComponents.forEach(this.ValidateComponent.bind(this));
+        proposal.diff?.updatedComponents.forEach(this.UpdateComponent.bind(this));
 
         // return commit status
         this.commits.push(proposal);

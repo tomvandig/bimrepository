@@ -1,12 +1,12 @@
 
 namespace bimrepo;
 
-enum ComponentDataType: byte { Number, String, ArrayStart, ArrayEnd }
+enum ComponentDataType: byte { Number = 1, String, ArrayStart, ArrayEnd }
 
 // fb guarantees you don't pay for unset table members
 table ComponentData
 {
-    type: ComponentDataType;
+    type: ComponentDataType = Number;
     array_length: int32;
     num: int32;
     str: string;

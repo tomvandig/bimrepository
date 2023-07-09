@@ -111,18 +111,16 @@ function genPropertyExportCode(name, property)
     {
         return `
             // property ${name}
-            componentObj.data.push(TokenType.ArrayStart);
-            componentObj.data.push(this.${name}.length);
-            this.${name}.forEach((item) => componentObj.data.push(item));
-            componentObj.data.push(TokenType.ArrayEnd);
+            componentObj.data.push(MakeArrayStart(this.${name}.length));
+            this.${name}.forEach((item) => componentObj.data.push(MakeNumber(item)));
+            componentObj.data.push(MakeArrayEnd());
         `;
     }
     else if (property.type === "number")
     {
         return `
             // property ${name}
-            componentObj.data.push(TokenType.Number);
-            componentObj.data.push(this.${name});
+            componentObj.data.push(MakeNumber(this.${name}));
         `;
     }
     else
@@ -153,13 +151,12 @@ function genPropertyImportCode(name, property)
         return `
             // property ${name}
             {
-                if (componentObj.data.shift() != TokenType.ArrayStart) throw new Error("Expected ArrayStart");
-                let count = componentObj.data.shift()!;
+                let count = GetArrayStart(componentObj);
                 for (let i = 0; i < count; i++)
                 {
-                    obj.${name}.push(componentObj.data.shift()!);
+                    obj.${name}.push(GetNumber(componentObj));
                 }
-                if (componentObj.data.shift() != TokenType.ArrayEnd) throw new Error("Expected ArrayEnd");
+                Expect(componentObj, ComponentDataType.ArrayEnd);
             }
         `;
     }
@@ -168,8 +165,7 @@ function genPropertyImportCode(name, property)
         return `
             // property ${name}
             {
-                if (componentObj.data.shift() != TokenType.Number) throw new Error("Expected number");
-                obj.${name} = componentObj.data.shift()!;
+                obj.${name} = GetNumber(componentObj);
             }
         `;
     }
@@ -247,17 +243,31 @@ function convert(path)
 {
     let schema = JSON.parse(fs.readFileSync(path));
 
+    let bimRepoImports = [
+        "Component", 
+        "ComponentDataType", 
+        "ComponentT", 
+        "ItemsT", 
+        "PropertyType", 
+        "SchemaT", 
+        "propertyT", 
+        "shapeT"
+    ];
+    
+    let helperImports = [
+        "Expect", 
+        "GetArrayStart", 
+        "GetNumber", 
+        "MakeArrayEnd", 
+        "MakeArrayStart", 
+        "MakeNumber"
+    ]
+
     let fbimports = [
         `import * as flatbuffers from 'flatbuffers';`,
-        `import { Schema, SchemaT } from '../bimrepo/schema';`,
-        `import { shapeT } from '../bimrepo/shape';`,
-        `import { propertyT } from '../bimrepo/property';`,
-        `import { ItemsT } from '../bimrepo/items';`,
-        `import { PropertyType } from '../bimrepo/property-type';`,
-        `import { Component, ComponentT } from '../bimrepo/component';`,
-        `import { TokenType } from '../bimrepo/token-type';`,
-        `import { ECSComponent } from '../ecs';`
-
+        `import { ECSComponent } from '../ecs';`,
+        `import { ${bimRepoImports.join(", ")} } from '../bimrepo';`,
+        `import { ${helperImports.join(", ")} } from '../helper';`,
     ].join("\n");
     let header = `\n/*\n${JSON.stringify(schema, null, 4)}\n*/\n\n${fbimports}\n`;
     let output = `${header}\n${genClass(schema)}`;
