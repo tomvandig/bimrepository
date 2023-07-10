@@ -11,9 +11,9 @@ async function test()
 
     ledger.update(point);
 
-    await ledger.commit("bob@bob.com", "I done did a commit");
+    let num = await ledger.commit("bob@bob.com", "I done did a commit");
 
-    let commit = await ledger.GetCommit(0);
+    let commit = await ledger.GetCommit(num);
 
     console.log(JSON.stringify(commit, null, 4));
 }
