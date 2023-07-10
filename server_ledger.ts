@@ -75,6 +75,8 @@ export class ServerLedger
 
     public Commit(proposal: CommitProposalT)
     {
+        let id = this.commits.length;
+
         // process data
         proposal.diff?.updatedSchemas.forEach(this.UpdateType.bind(this));
         proposal.diff?.updatedComponents.forEach(this.ValidateComponent.bind(this));
@@ -84,6 +86,13 @@ export class ServerLedger
         this.commits.push(proposal);
 
         this.Notify(proposal);
+
+        return id;
+    }
+
+    public GetCommit(id: number)
+    {
+        return this.commits[id];
     }
 
     private Notify(commit: CommitProposalT)

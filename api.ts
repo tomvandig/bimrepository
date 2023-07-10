@@ -1,8 +1,9 @@
-import { ByteBuffer } from "flatbuffers";
+import { ByteBuffer, Builder } from "flatbuffers";
 import { CommitProposal, CommitProposalT } from "./bimrepo";
 import { ServerLedger } from "./server_ledger";
 import * as http from "http";
 import { WebSocketServer } from 'ws';
+import { CommitResponse, CommitResponseT } from "./bimrepo/commit-response";
 const express = require('express')
 
 const wss = new WebSocketServer({ noServer: true });
@@ -33,8 +34,18 @@ function toArrayBuffer(buffer) {
     return view;
   }
 
+  function toBuffer(arrayBuffer) {
+    const buffer = Buffer.alloc(arrayBuffer.byteLength);
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < buffer.length; ++i) {
+      buffer[i] = view[i];
+    }
+    return buffer;
+  }
+
 app.post('/commit', (req, res) => {
     let buf = toArrayBuffer(req.body);
+    console.log(`Received ${buf.byteLength} bytes`);
     
     let commitProposal = new CommitProposalT();
     CommitProposal.getRootAsCommitProposal(new ByteBuffer(buf)).unpackTo(commitProposal);
@@ -42,9 +53,24 @@ app.post('/commit', (req, res) => {
     console.log(commitProposal);
     console.log(JSON.stringify(commitProposal, null, 4));
 
-    ledger.Commit(commitProposal);
+    let response = new CommitResponseT(ledger.Commit(commitProposal));
 
-    res.send('POST request to the homepage')
+    let fbb = new Builder(1);
+    CommitResponse.finishCommitResponseBuffer(fbb, response.pack(fbb));
+    let responseBuffer = fbb.asUint8Array().slice(0);
+    
+    res.send(toBuffer(responseBuffer));
+})
+
+app.get('/commit/:id', (req, res) => {
+  
+  let commit = ledger.GetCommit(req.params.id);
+
+  let fbb = new Builder(1);
+  CommitProposal.finishCommitProposalBuffer(fbb, commit.pack(fbb));
+  let responseBuffer = fbb.asUint8Array().slice(0);
+
+  res.send(toBuffer(responseBuffer))
 })
 
 let server = http.createServer(app);

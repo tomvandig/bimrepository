@@ -1,0 +1,8 @@
+
+namespace bimrepo;
+
+table CommitResponse {
+    id: int;
+}
+
+root_type CommitResponse;

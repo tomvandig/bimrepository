@@ -2,7 +2,17 @@ import * as flatbuffers from "flatbuffers";
 import axios from "axios";
 import { ECSComponent } from "./ecs";
 import { CommitDiffT, CommitProposal, CommitProposalT } from "./bimrepo";
+import { CommitResponse, CommitResponseT } from "./bimrepo/commit-response";
 
+
+function toArrayBuffer(buffer) {
+    const arrayBuffer = new ArrayBuffer(buffer.length);
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < buffer.length; ++i) {
+      view[i] = buffer[i];
+    }
+    return view;
+  }
 
 export default class ClientLedger {
 
@@ -25,7 +35,7 @@ export default class ClientLedger {
         return this.modifiedComponents.length !== 0;
     }
 
-    async commit(author: string, message: string)
+    async commit(author: string, message: string): Promise<number>
     {
         if (!this.canCommit()) throw new Error(`No components to commit`);
 
@@ -60,9 +70,24 @@ export default class ClientLedger {
             headers: {'Content-Type': 'application/octet-stream'},
         });
 
-        console.log(response.data);
+        let buf = toArrayBuffer(response.data);
+        
+        let commitResponse = new CommitResponseT();
+        CommitResponse.getRootAsCommitResponse(new flatbuffers.ByteBuffer(buf)).unpackTo(commitResponse);
+
+        return commitResponse.id;
     }
 
+    async GetCommit(id: number)
+    {
+        let response = await axios.get(`${this.address}/commit/${id}`, {
+            responseType: "arraybuffer"
+        });
+        let buf = toArrayBuffer(response.data);
 
+        let commit = new CommitProposalT();
+        CommitProposal.getRootAsCommitProposal(new flatbuffers.ByteBuffer(buf)).unpackTo(commit);
 
+        return commit;
+    }
 }

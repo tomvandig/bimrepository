@@ -14,5 +14,4 @@ table CommitProposal {
     message: string;
     diff: CommitDiff;
 }
-
 root_type CommitProposal;
