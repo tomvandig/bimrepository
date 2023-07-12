@@ -98,7 +98,7 @@ function genSchemaShapeCode(shape)
 function genSchemaExportCode(schema)
 {
     return `
-    public static SchemaT exportDefinitionToArray() {
+    public override SchemaT exportDefinitionToArray() {
         var schemaObj = new SchemaT();
         schemaObj.Id = new List<string>() { ${schema["$id"].map(e => `"${e}"`).join(",")} };
         schemaObj.Schemaversion = "${schema["$schemaversion"]}";
@@ -139,7 +139,7 @@ function genPropertyExportCode(name, property)
 function genComponentExportCode(schema)
 {
     return `
-    public ComponentT exportToDataArray() {
+    public override ComponentT exportToDataArray() {
         ComponentT componentObj = new();
 
         componentObj.Type = new List<string>() {${schema["$id"].map(e => `"${e}"`).join(",")}};

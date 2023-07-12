@@ -70,9 +70,9 @@ public class ClientLedger {
 
         var requestURL = $"{this.address}/commit";
         // do request with fbb
-        using HttpClient client = new();
         var arr = fbb.DataBuffer.ToSizedArray();
         var content = new ByteArrayContent(arr);
+        using HttpClient client = new();
         content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
         var response = await client.PostAsync(requestURL, content);
         var responseStream = await response.Content.ReadAsStreamAsync();
@@ -84,18 +84,14 @@ public class ClientLedger {
         return commitResponse.Id;
     }
 
-    /*
-Task<CommitProposalT> GetCommit(int id)
-{
-    let response = await axios.get(`${this.address}/commit/${id}`, {
-        responseType: "arraybuffer"
-    });
-    let buf = toArrayBuffer(response.data);
+    public async Task<CommitProposalT> GetCommit(int id)
+    {
+        using HttpClient client = new();
+        var url = $"{this.address}/commit/{id}";
+        var response = await client.GetAsync(url);
+        var responseStream = await response.Content.ReadAsStreamAsync();
+        var bytes = ReadFully(responseStream);
 
-    let commit = new CommitProposalT();
-    CommitProposal.getRootAsCommitProposal(new flatbuffers.ByteBuffer(buf)).unpackTo(commit);
-
-    return commit;
-}
-    */
+        return CommitProposalT.DeserializeFromBinary(bytes);
+    }
 }

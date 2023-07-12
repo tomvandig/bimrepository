@@ -15,12 +15,12 @@ public class ECSComponent {
         return this.simplifiedName;
     }
 
-    public ComponentT exportToDataArray()
+    public virtual ComponentT exportToDataArray()
     {
         return new ComponentT();
     }
 
-    public SchemaT exportDefinitionToArray() {
+    public virtual SchemaT exportDefinitionToArray() {
         return new SchemaT();
     }
 }
