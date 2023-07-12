@@ -179,10 +179,7 @@ function genComponentImportCode(name, schema)
 {
     return `
     
-    static importFromDataArray(buf: flatbuffers.ByteBuffer): ${name} {
-        let componentObj = new ComponentT();
-        Component.getRootAsComponent(buf).unpackTo(componentObj);
-
+    static importFromDataArray(componentObj: ComponentT): ${name} {
         // TODO: check if component type matches the class
 
         let obj = new ${name}();
