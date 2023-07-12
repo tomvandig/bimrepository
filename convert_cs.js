@@ -273,7 +273,7 @@ function convert(path)
 
     console.log(cliOutput);
 
-    fs.writeFileSync(`./output/${schema.$id.join("_")}.ts`, output);
+    fs.writeFileSync(`./output/cs/${schema.$id.join("_")}.cs`, output);
 }
 
 convert("./schema/cartesianpoint.json");
