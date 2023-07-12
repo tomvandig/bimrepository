@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "genfb": "flatc.exe --ts --gen-object-api ./flatbuffers/schema.fbs ./flatbuffers/commit-response.fbs ./flatbuffers/component.fbs ./flatbuffers/commit.fbs",
+    "genfb": "flatc.exe --ts --csharp --gen-object-api ./flatbuffers/schema.fbs ./flatbuffers/commit-response.fbs ./flatbuffers/component.fbs ./flatbuffers/commit.fbs",
     "test": "esbuild test.ts --bundle  --platform=node --outfile=bundle.js && node bundle.js",
     "serve": "esbuild api.ts --bundle  --platform=node --outfile=bundle_serve.js && node bundle_serve.js"
   },

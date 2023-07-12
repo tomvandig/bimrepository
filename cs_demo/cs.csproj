@@ -7,4 +7,25 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\bimrepo\CommitDiff.cs" Link="CommitDiff.cs" />
+    <Compile Include="..\bimrepo\CommitProposal.cs" Link="CommitProposal.cs" />
+    <Compile Include="..\bimrepo\CommitResponse.cs" Link="CommitResponse.cs" />
+    <Compile Include="..\bimrepo\Component.cs" Link="Component.cs" />
+    <Compile Include="..\bimrepo\ComponentData.cs" Link="ComponentData.cs" />
+    <Compile Include="..\bimrepo\ComponentDataType.cs" Link="ComponentDataType.cs" />
+    <Compile Include="..\bimrepo\Items.cs" Link="Items.cs" />
+    <Compile Include="..\bimrepo\property.cs" Link="property.cs" />
+    <Compile Include="..\bimrepo\PropertyType.cs" Link="PropertyType.cs" />
+    <Compile Include="..\bimrepo\Schema.cs" Link="Schema.cs" />
+    <Compile Include="..\bimrepo\shape.cs" Link="shape.cs" />
+    <Compile Include="..\ecs.cs" Link="ecs.cs" />
+    <Compile Include="..\helper.cs" Link="helper.cs" />
+    <Compile Include="..\output\cs\ifc2x3_cartesianpoint.cs" Link="ifc2x3_cartesianpoint.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.FlatBuffers" Version="23.5.26" />
+  </ItemGroup>
+
 </Project>

@@ -7,10 +7,15 @@ const highlight = require('cli-highlight').highlight
 
 console.log(process.argv[2]);
 
+// idiotic
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function namespace(name, code)
 {
     return dedent`
-        export namespace ${name} {
+        namespace ${name} {
             ${code}
         }
     `;
@@ -20,7 +25,7 @@ function genArray(prop)
 {
     if (prop.items.type === "number")
     {
-        return `number[]`;
+        return `List<int>`;
     }
 
     return `<unknown type ${prop.items.type}>`;
@@ -30,11 +35,11 @@ function genProp(name, prop)
 {
     if (prop.type === "array")
     {
-        return `${name}: ${genArray(prop)} = [];`;
+        return `public ${genArray(prop)} ${name} = new();`;
     }
     if (prop.type === "number")
     {
-        return `${name}: number = 0`;
+        return `public int ${name} = 0;`;
     }
 
     return `<unknown type ${prop.type}>`;
@@ -56,8 +61,8 @@ function propTypeToFBType(propType)
 function genItems(propname, property)
 {
     return `
-        ${propname}.items = new ItemsT();
-        ${propname}.items.type = ${propTypeToFBType(property.items.type)};
+        ${propname}.Items = new ItemsT();
+        ${propname}.Items.Type = ${propTypeToFBType(property.items.type)};
     `;
 }
 
@@ -68,13 +73,13 @@ function genPropertySchemaCode(name, property)
     return `
         // property ${name}
         {
-            let ${propname} = new propertyT();
+            var ${propname} = new propertyT();
 
-            ${propname}.name = "${name}";
-            ${propname}.type = ${propTypeToFBType(property.type)};
+            ${propname}.Name = "${name}";
+            ${propname}.Type = ${propTypeToFBType(property.type)};
             ${property.type === "array" ? genItems(propname, property) : ""}
 
-            schemaObj.schemaShape.properties.push(${propname});
+            schemaObj.SchemaShape.Properties.Add(${propname});
         }
     `;
 }
@@ -82,7 +87,7 @@ function genPropertySchemaCode(name, property)
 function genSchemaShapeCode(shape)
 {
     return `
-        schemaObj.schemaShape = new shapeT();
+        schemaObj.SchemaShape = new shapeT();
 
         ${Object.keys(shape).map(pname => genPropertySchemaCode(pname, shape[pname])).join("\n")}
     `;
@@ -91,12 +96,12 @@ function genSchemaShapeCode(shape)
 function genSchemaExportCode(schema)
 {
     return `
-    exportDefinitionToArray(): SchemaT {
-        let schemaObj = new SchemaT();
-        schemaObj.id = [${schema["$id"].map(e => `"${e}"`).join(",")}];
-        schemaObj.schemaversion = "${schema["$schemaversion"]}";
-        schemaObj.comment = "${schema["$comment"]}";
-        schemaObj.description = "${schema["description"]}";
+    public static SchemaT exportDefinitionToArray() {
+        var schemaObj = new SchemaT();
+        schemaObj.Id = new List<string>() { ${schema["$id"].map(e => `"${e}"`).join(",")} };
+        schemaObj.Schemaversion = "${schema["$schemaversion"]}";
+        schemaObj.Comment = "${schema["$comment"]}";
+        schemaObj.Description = "${schema["description"]}";
 
         ${genSchemaShapeCode(schema.shape)}
 
@@ -111,16 +116,16 @@ function genPropertyExportCode(name, property)
     {
         return `
             // property ${name}
-            componentObj.data.push(MakeArrayStart(this.${name}.length));
-            this.${name}.forEach((item) => componentObj.data.push(MakeNumber(item)));
-            componentObj.data.push(MakeArrayEnd());
+            componentObj.Data.Add(Helper.MakeArrayStart(this.${name}.Count));
+            this.${name}.ForEach((item) => componentObj.Data.Add(Helper.MakeNumber(item)));
+            componentObj.Data.Add(Helper.MakeArrayEnd());
         `;
     }
     else if (property.type === "number")
     {
         return `
             // property ${name}
-            componentObj.data.push(MakeNumber(this.${name}));
+            componentObj.Data.Add(Helper.MakeNumber(this.${name}));
         `;
     }
     else
@@ -132,10 +137,11 @@ function genPropertyExportCode(name, property)
 function genComponentExportCode(schema)
 {
     return `
-    exportToDataArray(): ComponentT {
-        let componentObj = new ComponentT();
+    public ComponentT exportToDataArray() {
+        ComponentT componentObj = new();
 
-        componentObj.type = [${schema["$id"].map(e => `"${e}"`).join(",")}];
+        componentObj.Type = new List<string>() {${schema["$id"].map(e => `"${e}"`).join(",")}};
+        componentObj.Data = new List<ComponentDataT>();
 
         ${Object.keys(schema.shape).map(prop => genPropertyExportCode(prop, schema.shape[prop])).join("\n")}
         
@@ -151,12 +157,12 @@ function genPropertyImportCode(name, property)
         return `
             // property ${name}
             {
-                let count = GetArrayStart(componentObj);
-                for (let i = 0; i < count; i++)
+                var count = Helper.GetArrayStart(componentObj);
+                for (var i = 0; i < count; i++)
                 {
-                    obj.${name}.push(GetNumber(componentObj));
+                    obj.${name}.Add(Helper.GetNumber(componentObj));
                 }
-                Expect(componentObj, ComponentDataType.ArrayEnd);
+                Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
             }
         `;
     }
@@ -165,7 +171,7 @@ function genPropertyImportCode(name, property)
         return `
             // property ${name}
             {
-                obj.${name} = GetNumber(componentObj);
+                obj.${name} = Helper.GetNumber(componentObj);
             }
         `;
     }
@@ -179,10 +185,10 @@ function genComponentImportCode(name, schema)
 {
     return `
     
-    static importFromDataArray(componentObj: ComponentT): ${name} {
+    public static ${name} importFromDataArray(ComponentT componentObj) {
         // TODO: check if component type matches the class
 
-        let obj = new ${name}();
+        var obj = new ${name}();
         
         ${Object.keys(schema.shape).map(prop => genPropertyImportCode(prop, schema.shape[prop])).join("\n")}
 
@@ -201,10 +207,10 @@ function genClass(schema)
     let name = id[id.length - 1];
     let code =  dedent`
         ${comment ? `// ${comment}` : ""}
-        export class ${name} extends ECSComponent {
+        public class ${name} : ECSComponent {
 
-            constructor() {
-                super("${id.join("_")}");
+            public ${name}() : base("${id.join("_")}") {
+
             }
             
             // properties
@@ -212,7 +218,7 @@ function genClass(schema)
             // end properties
 
             // methods
-            validate(): boolean {
+            bool validate() {
                 return false;
             }
 
@@ -261,10 +267,7 @@ function convert(path)
     ]
 
     let fbimports = [
-        `import * as flatbuffers from 'flatbuffers';`,
-        `import { ECSComponent } from '../ecs';`,
-        `import { ${bimRepoImports.join(", ")} } from '../bimrepo';`,
-        `import { ${helperImports.join(", ")} } from '../helper';`,
+        `using bimrepo;`,
     ].join("\n");
     let header = `\n/*\n${JSON.stringify(schema, null, 4)}\n*/\n\n${fbimports}\n`;
     let output = `${header}\n${genClass(schema)}`;
