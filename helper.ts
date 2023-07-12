@@ -4,7 +4,7 @@ import { ComponentDataT, ComponentDataType, ComponentT } from "./bimrepo";
 export function Expect(component: ComponentT, type: ComponentDataType)
 {
     let data = component.data.shift();
-    if (data.type !== ComponentDataType.Number)
+    if (data.type !== type)
     {
         throw new Error(`Expected number but received ${data.type}`);
     }

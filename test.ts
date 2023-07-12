@@ -11,11 +11,19 @@ async function test()
 
     ledger.update(point);
 
-    let num = await ledger.commit("bob@bob.com", "I done did a commit");
+    let num = await ledger.commit("bob@bob.com", "I done did a commit2");
 
     let commit = await ledger.GetCommit(num);
 
+    let components = commit.diff?.updatedComponents;
+
     console.log(JSON.stringify(commit, null, 4));
+
+    components?.forEach((component) => {
+        let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
+        console.log(cartpoint);
+    });
+
 }
 
 test();
