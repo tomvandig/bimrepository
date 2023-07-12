@@ -1,6 +1,8 @@
 
 using bimrepo;
 using Google.FlatBuffers;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 
 public class ClientLedger {
 
@@ -69,7 +71,9 @@ public class ClientLedger {
         var requestURL = $"{this.address}/commit";
         // do request with fbb
         using HttpClient client = new();
-        var content = new ByteArrayContent(fbb.DataBuffer.ToFullArray());
+        var arr = fbb.DataBuffer.ToSizedArray();
+        var content = new ByteArrayContent(arr);
+        content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
         var response = await client.PostAsync(requestURL, content);
         var responseStream = await response.Content.ReadAsStreamAsync();
 
