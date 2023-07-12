@@ -89,6 +89,8 @@ function genSchemaShapeCode(shape)
     return `
         schemaObj.SchemaShape = new shapeT();
 
+        schemaObj.SchemaShape.Properties = new List<propertyT>();
+
         ${Object.keys(shape).map(pname => genPropertySchemaCode(pname, shape[pname])).join("\n")}
     `;
 }

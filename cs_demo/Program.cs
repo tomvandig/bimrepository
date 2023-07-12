@@ -11,5 +11,7 @@ var dataArray = obj.exportToDataArray();
 
 var result = ifc2x3.cartesianpoint.importFromDataArray(dataArray);
 
+ifc2x3.cartesianpoint.exportDefinitionToArray();
+
 Console.WriteLine(result.cardinality);
 Console.WriteLine(result.points.ToString());
