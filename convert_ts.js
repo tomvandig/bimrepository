@@ -262,9 +262,9 @@ function convert(path)
 
     let fbimports = [
         `import * as flatbuffers from 'flatbuffers';`,
-        `import { ECSComponent } from '../ecs';`,
-        `import { ${bimRepoImports.join(", ")} } from '../bimrepo';`,
-        `import { ${helperImports.join(", ")} } from '../helper';`,
+        `import { ECSComponent } from '../../ecs';`,
+        `import { ${bimRepoImports.join(", ")} } from '../../bimrepo';`,
+        `import { ${helperImports.join(", ")} } from '../../helper';`,
     ].join("\n");
     let header = `\n/*\n${JSON.stringify(schema, null, 4)}\n*/\n\n${fbimports}\n`;
     let output = `${header}\n${genClass(schema)}`;

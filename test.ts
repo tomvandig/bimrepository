@@ -1,5 +1,5 @@
 import Ledger from "./clientledger";
-import { ifc2x3 } from "./output/ifc2x3_cartesianpoint";
+import { ifc2x3 } from "./output/ts/ifc2x3_cartesianpoint";
 
 async function test()
 { 
