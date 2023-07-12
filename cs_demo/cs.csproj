@@ -19,6 +19,7 @@
     <Compile Include="..\bimrepo\PropertyType.cs" Link="PropertyType.cs" />
     <Compile Include="..\bimrepo\Schema.cs" Link="Schema.cs" />
     <Compile Include="..\bimrepo\shape.cs" Link="shape.cs" />
+    <Compile Include="..\clientledger.cs" Link="clientledger.cs" />
     <Compile Include="..\ecs.cs" Link="ecs.cs" />
     <Compile Include="..\helper.cs" Link="helper.cs" />
     <Compile Include="..\output\cs\ifc2x3_cartesianpoint.cs" Link="ifc2x3_cartesianpoint.cs" />

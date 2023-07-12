@@ -10,17 +10,17 @@ public class ECSComponent {
         this.simplifiedName = name;
     }
 
-    string getSimplifiedName()
+    public string getSimplifiedName()
     {
         return this.simplifiedName;
     }
 
-    ComponentT exportToDataArray()
+    public ComponentT exportToDataArray()
     {
         return new ComponentT();
     }
 
-    SchemaT exportDefinitionToArray() {
+    public SchemaT exportDefinitionToArray() {
         return new SchemaT();
     }
 }
