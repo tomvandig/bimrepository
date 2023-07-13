@@ -2,7 +2,7 @@ import { ByteBuffer, Builder } from "flatbuffers";
 import { CommitProposal, CommitProposalT } from "./bimrepo";
 import { ServerLedger } from "./server_ledger";
 import * as http from "http";
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket } from 'ws';
 import { CommitResponse, CommitResponseT } from "./bimrepo/commit-response";
 const express = require('express')
 
@@ -14,15 +14,61 @@ let ledger = new ServerLedger();
 
 app.use(express.raw());
 
+function uuidv4() {
+  return (<any>[1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+
+class WSListener
+{
+    ws: WebSocket;
+    id: string;
+    constructor(ws: WebSocket)
+    {
+      this.ws = ws;
+      this.id = uuidv4();
+    }
+
+    notifyHeadChanged(newHead: number)
+    {
+      this.ws.send(newHead);
+    }
+
+    receive(obj: any)
+    {
+      // TODO: update rights
+    }
+}
+
+let connections = new Map<string, WSListener>();
+
+function AddConnection(listener: WSListener)
+{
+    connections.set(listener.id, listener);
+}
+
+ledger.AddListener("api", (commit: number) => {
+  connections.forEach((conn) => {
+    // TODO: filter
+    conn.notifyHeadChanged(commit);
+  })
+});
 
 wss.on('connection', function connection(connection) {
+  let client = new WSListener(connection);
+
+  AddConnection(client);
+
   connection.on('error', console.error);
   
   connection.on('message', function message(data) {
-    console.log('received: %s', data);
+    client.receive(data);
   });
 
-  connection.send('something');
+  connection.on("close", () => {
+    connections.delete(client.id);
+  });
 });
 
 function toArrayBuffer(buffer) {

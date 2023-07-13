@@ -1,7 +1,7 @@
 import { CommitProposalT, ComponentT, SchemaT } from "./bimrepo";
 
 
-type LedgerListener = (CommitProposalT) => {};
+type LedgerListener = (number) => void;
 
 export class ServerLedger
 {
@@ -85,7 +85,7 @@ export class ServerLedger
         // return commit status
         this.commits.push(proposal);
 
-        this.Notify(proposal);
+        this.Notify(id);
 
         return id;
     }
@@ -95,9 +95,9 @@ export class ServerLedger
         return this.commits[id];
     }
 
-    private Notify(commit: CommitProposalT)
+    private Notify(id: number)
     {
-        this.listeners.forEach((l) => l(commit));
+        this.listeners.forEach((l) => l(id));
     }
     
 
