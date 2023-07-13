@@ -3,10 +3,14 @@ import { ComponentDataT, ComponentDataType, ComponentT } from "./bimrepo";
 
 export function Expect(component: ComponentT, type: ComponentDataType)
 {
-    let data = component.data.shift();
+    if (component.data.length === 0)
+    {
+        throw new Error(`Expected ${type} but reached end of data`);
+    }
+    let data = component.data.shift()!;
     if (data.type !== type)
     {
-        throw new Error(`Expected number but received ${data.type}`);
+        throw new Error(`Expected ${type} but received ${data.type}`);
     }
     return data;
 }
