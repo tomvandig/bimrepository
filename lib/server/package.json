@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "serve": "esbuild api.ts --bundle  --platform=node --outfile=bundle_serve.js --external:flatbuffers && node bundle_serve.js"
+    "serve": "esbuild express_api.ts --bundle  --platform=node --outfile=bundle_serve.js --external:flatbuffers && node bundle_serve.js"
   },
   "dependencies": {
     "axios": "^1.4.0",
