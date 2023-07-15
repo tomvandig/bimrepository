@@ -55,8 +55,6 @@ function toArrayBuffer(buffer) {
 app.post('/commit', (req, res) => {
     let buf = toArrayBuffer(req.body);
 
-    console.log(`Received ${buf.byteLength} bytes`);
-
     res.send(toBuffer(api.Commit(buf)));
 })
 

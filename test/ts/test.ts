@@ -2,6 +2,7 @@ import Ledger, { IServerLedger } from "../../lib/client/ts/clientledger";
 import { API } from "../../lib/server/api";
 import { LedgerBridge } from "../../lib/util/ledger_bridge";
 import { ifc2x3 } from "./schema_ts/ts/ifc2x3_cartesianpoint";
+import { describe, it } from "./crappucino"
 
 function GetRemoteServerLedger()
 {
@@ -14,31 +15,49 @@ function GetLocalServerLedger()
     return new LedgerBridge(server);
 }
 
-async function test()
-{ 
-    let serverLedger = GetLocalServerLedger();
-
-    let ledger = new Ledger(serverLedger);
-
+function MakeCartesianPoint()
+{
     let point = new ifc2x3.cartesianpoint();
     point.points = [1,2,33];
     point.cardinality = 3;
-
-    ledger.update(point);
-
-    let num = await ledger.commit("bob@bob.com", "I done did a commit2");
-
-    let commit = await ledger.GetCommit(num);
-
-    let components = commit.diff?.updatedComponents;
-
-    console.log(JSON.stringify(commit, null, 4));
-
-    components?.forEach((component) => {
-        let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
-        console.log(cartpoint);
-    });
-
+    return point;
 }
 
-test();
+function expect_eq(result: any, expectation: any)
+{
+    if (result !== expectation)
+    {
+        throw new Error(`Expected ${expectation} but received ${result}`);
+    }
+}
+
+describe('Integration Tests', function () {
+    describe('Commit', function () {
+        it('Committing component should allow retrieval of component', async function () {
+            // arrange
+            let serverLedger = GetLocalServerLedger();
+
+            let ledger = new Ledger(serverLedger);
+
+            ledger.update(MakeCartesianPoint());
+
+            // act
+            let num = await ledger.commit("bob@bob.com", "I done did a commit2");
+            let commit = await ledger.GetCommit(num);
+
+            // assert
+            let components = commit.diff?.updatedComponents;
+
+            expect_eq(components?.length, 1);
+
+            components?.forEach((component) => {
+                let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
+                expect_eq(cartpoint.cardinality, 3);
+                expect_eq(cartpoint.points.length, 3);
+                expect_eq(cartpoint.points[0], 1);
+                expect_eq(cartpoint.points[1], 2);
+                expect_eq(cartpoint.points[2], 33);
+            });
+        });
+    });
+});

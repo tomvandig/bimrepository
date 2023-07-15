@@ -61,9 +61,6 @@ export class API
     let commitProposal = new CommitProposalT();
     CommitProposal.getRootAsCommitProposal(new ByteBuffer(buf)).unpackTo(commitProposal);
 
-    console.log(commitProposal);
-    console.log(JSON.stringify(commitProposal, null, 4));
-
     let response = new CommitResponseT(this.ledger.Commit(commitProposal));
 
     let fbb = new Builder(1);
