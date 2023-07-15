@@ -2,7 +2,7 @@ import Ledger, { IServerLedger } from "../../lib/client/ts/clientledger";
 import { API } from "../../lib/server/api";
 import { LedgerBridge } from "../../lib/util/ledger_bridge";
 import { ifc2x3 } from "./schema_ts/ts/ifc2x3_cartesianpoint";
-import { describe, it } from "./crappucino"
+import { describe, it, test } from "./crappucino"
 import { CommitProposalT, ComponentT } from "../../lib/schema/bimrepo";
 
 function GetLocalServerLedger()
@@ -154,3 +154,5 @@ describe('Integration Tests', function () {
         });
     });
 });
+
+test();
