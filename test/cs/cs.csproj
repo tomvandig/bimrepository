@@ -8,25 +8,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\bimrepo\CommitDiff.cs" Link="CommitDiff.cs" />
-    <Compile Include="..\bimrepo\CommitProposal.cs" Link="CommitProposal.cs" />
-    <Compile Include="..\bimrepo\CommitResponse.cs" Link="CommitResponse.cs" />
-    <Compile Include="..\bimrepo\Component.cs" Link="Component.cs" />
-    <Compile Include="..\bimrepo\ComponentData.cs" Link="ComponentData.cs" />
-    <Compile Include="..\bimrepo\ComponentDataType.cs" Link="ComponentDataType.cs" />
-    <Compile Include="..\bimrepo\Items.cs" Link="Items.cs" />
-    <Compile Include="..\bimrepo\property.cs" Link="property.cs" />
-    <Compile Include="..\bimrepo\PropertyType.cs" Link="PropertyType.cs" />
-    <Compile Include="..\bimrepo\Schema.cs" Link="Schema.cs" />
-    <Compile Include="..\bimrepo\shape.cs" Link="shape.cs" />
-    <Compile Include="..\clientledger.cs" Link="clientledger.cs" />
-    <Compile Include="..\ecs.cs" Link="ecs.cs" />
-    <Compile Include="..\helper.cs" Link="helper.cs" />
-    <Compile Include="..\output\cs\ifc2x3_cartesianpoint.cs" Link="ifc2x3_cartesianpoint.cs" />
+    <Compile Include="..\..\lib\client\cs\clientledger.cs" Link="lib\clientledger.cs" />
+    <Compile Include="..\..\lib\client\cs\ecs.cs" Link="lib\ecs.cs" />
+    <Compile Include="..\..\lib\client\cs\helper.cs" Link="lib\helper.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\CommitDiff.cs" Link="lib\CommitDiff.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\CommitProposal.cs" Link="lib\CommitProposal.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\CommitResponse.cs" Link="lib\CommitResponse.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\Component.cs" Link="lib\Component.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\ComponentData.cs" Link="lib\ComponentData.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\ComponentDataType.cs" Link="lib\ComponentDataType.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\Items.cs" Link="lib\Items.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\property.cs" Link="lib\property.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\PropertyType.cs" Link="lib\PropertyType.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\Schema.cs" Link="lib\Schema.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\shape.cs" Link="lib\shape.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.FlatBuffers" Version="23.5.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="lib\" />
   </ItemGroup>
 
 </Project>
