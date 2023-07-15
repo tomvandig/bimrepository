@@ -1,9 +1,11 @@
-import Ledger from "../../lib/client/ts/clientledger";
+import Ledger, { IServerLedger } from "../../lib/client/ts/clientledger";
 import { ifc2x3 } from "./schema_ts/ts/ifc2x3_cartesianpoint";
 
 async function test()
 { 
-    let ledger = new Ledger("http://localhost:3000");
+    let serverLedger = new IServerLedger("http://localhost:3000");
+
+    let ledger = new Ledger(serverLedger);
 
     let point = new ifc2x3.cartesianpoint();
     point.points = [1,2,33];

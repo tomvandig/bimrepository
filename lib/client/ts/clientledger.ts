@@ -4,6 +4,34 @@ import { ECSComponent } from "./ecs";
 import { CommitDiffT, CommitProposal, CommitProposalT } from "../../schema/bimrepo";
 import { CommitResponse, CommitResponseT } from "../../schema/bimrepo/commit-response";
 
+export class IServerLedger
+{
+    private address: string;
+
+    constructor(address: string)
+    {
+        this.address = address;
+    }
+
+    public async Commit(commitBuffer: Uint8Array)
+    {
+        let response = await axios.post(`${this.address}/commit`, 
+            commitBuffer.buffer
+        , {
+            headers: {'Content-Type': 'application/octet-stream'},
+        });
+
+        return toArrayBuffer(response.data);
+    }
+
+    public async GetCommit(id: number)
+    {
+        let response = await axios.get(`${this.address}/commit/${id}`, {
+            responseType: "arraybuffer"
+        });
+        return toArrayBuffer(response.data);
+    }
+}
 
 function toArrayBuffer(buffer) {
     const arrayBuffer = new ArrayBuffer(buffer.length);
@@ -16,12 +44,12 @@ function toArrayBuffer(buffer) {
 
 export default class ClientLedger {
 
-    private address: string;
     private modifiedComponents: ECSComponent[] = [];
+    private serverLedger: IServerLedger;
 
-    constructor(address)
+    constructor(serverLedger: IServerLedger)
     {
-        this.address = address;
+        this.serverLedger = serverLedger;
     }
 
     update(component: ECSComponent)
@@ -64,29 +92,20 @@ export default class ClientLedger {
 
         let requestBuffer = fbb.asUint8Array().slice(0);
 
-        let response = await axios.post(`${this.address}/commit`, 
-            requestBuffer.buffer
-        , {
-            headers: {'Content-Type': 'application/octet-stream'},
-        });
+        let responseBuffer = await this.serverLedger.Commit(requestBuffer);
 
-        let buf = toArrayBuffer(response.data);
-        
         let commitResponse = new CommitResponseT();
-        CommitResponse.getRootAsCommitResponse(new flatbuffers.ByteBuffer(buf)).unpackTo(commitResponse);
+        CommitResponse.getRootAsCommitResponse(new flatbuffers.ByteBuffer(responseBuffer)).unpackTo(commitResponse);
 
         return commitResponse.id;
     }
 
     async GetCommit(id: number)
     {
-        let response = await axios.get(`${this.address}/commit/${id}`, {
-            responseType: "arraybuffer"
-        });
-        let buf = toArrayBuffer(response.data);
+        let responseBuffer = await this.serverLedger.GetCommit(id);
 
         let commit = new CommitProposalT();
-        CommitProposal.getRootAsCommitProposal(new flatbuffers.ByteBuffer(buf)).unpackTo(commit);
+        CommitProposal.getRootAsCommitProposal(new flatbuffers.ByteBuffer(responseBuffer)).unpackTo(commit);
 
         return commit;
     }
