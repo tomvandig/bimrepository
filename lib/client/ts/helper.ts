@@ -1,4 +1,4 @@
-import { ComponentDataT, ComponentDataType, ComponentT } from "./bimrepo";
+import { ComponentDataT, ComponentDataType, ComponentT } from "../../schema/bimrepo";
 
 
 export function Expect(component: ComponentT, type: ComponentDataType)

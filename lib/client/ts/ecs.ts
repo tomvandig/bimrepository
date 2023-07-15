@@ -1,4 +1,4 @@
-import { ComponentT, SchemaT } from './bimrepo';
+import { ComponentT, SchemaT } from '../../schema/bimrepo';
 
 export class ECSComponent {
 

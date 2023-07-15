@@ -1,0 +1,1 @@
+flatc.exe --ts --csharp --gen-object-api ./fbs/schema.fbs ./fbs/commit-response.fbs ./fbs/component.fbs ./fbs/commit.fbs

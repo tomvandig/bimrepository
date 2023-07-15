@@ -1,4 +1,4 @@
-import { CommitProposalT, ComponentT, SchemaT } from "./bimrepo";
+import { CommitProposalT, ComponentT, SchemaT } from "../schema/bimrepo";
 
 
 type LedgerListener = (number) => void;

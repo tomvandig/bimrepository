@@ -1,8 +1,8 @@
 import * as flatbuffers from "flatbuffers";
 import axios from "axios";
 import { ECSComponent } from "./ecs";
-import { CommitDiffT, CommitProposal, CommitProposalT } from "./bimrepo";
-import { CommitResponse, CommitResponseT } from "./bimrepo/commit-response";
+import { CommitDiffT, CommitProposal, CommitProposalT } from "../../schema/bimrepo";
+import { CommitResponse, CommitResponseT } from "../../schema/bimrepo/commit-response";
 
 
 function toArrayBuffer(buffer) {

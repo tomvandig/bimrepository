@@ -1,9 +1,9 @@
 import { ByteBuffer, Builder } from "flatbuffers";
-import { CommitProposal, CommitProposalT } from "./bimrepo";
+import { CommitProposal, CommitProposalT } from "../schema/bimrepo";
 import { ServerLedger } from "./server_ledger";
 import * as http from "http";
 import { WebSocketServer, WebSocket } from 'ws';
-import { CommitResponse, CommitResponseT } from "./bimrepo/commit-response";
+import { CommitResponse, CommitResponseT } from "../schema/bimrepo/commit-response";
 const express = require('express')
 
 const wss = new WebSocketServer({ noServer: true });

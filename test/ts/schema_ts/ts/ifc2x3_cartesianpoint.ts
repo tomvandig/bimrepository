@@ -23,9 +23,9 @@
 */
 
 import * as flatbuffers from 'flatbuffers';
-import { ECSComponent } from '../../ecs';
-import { Component, ComponentDataType, ComponentT, ItemsT, PropertyType, SchemaT, propertyT, shapeT } from '../../bimrepo';
-import { Expect, GetArrayStart, GetNumber, MakeArrayEnd, MakeArrayStart, MakeNumber } from '../../helper';
+import { ECSComponent } from '../../../../lib/client/ts/ecs';
+import { Component, ComponentDataType, ComponentT, ItemsT, PropertyType, SchemaT, propertyT, shapeT } from '../../../../lib/schema/bimrepo';
+import { Expect, GetArrayStart, GetNumber, MakeArrayEnd, MakeArrayStart, MakeNumber } from '../../../../lib/client/ts/helper';
 
 export namespace ifc2x3 {
     // TODO: fix
