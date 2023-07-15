@@ -3,11 +3,7 @@ import { API } from "../../lib/server/api";
 import { LedgerBridge } from "../../lib/util/ledger_bridge";
 import { ifc2x3 } from "./schema_ts/ts/ifc2x3_cartesianpoint";
 import { describe, it } from "./crappucino"
-
-function GetRemoteServerLedger()
-{
-    return new IServerLedger("http://localhost:3000");
-}
+import { CommitProposalT, ComponentT } from "../../lib/schema/bimrepo";
 
 function GetLocalServerLedger()
 {
@@ -53,6 +49,62 @@ function expect_eq(result: any, expectation: any)
     }
 }
 
+class TypedComponentAssert<T>
+{
+    obj: T;
+
+    constructor(obj: T)
+    {
+        this.obj = obj;
+    }
+
+    Satisfies(fn: (obj: T)=>void)
+    {
+        fn(this.obj);
+    }
+}
+
+class ComponentAssert
+{
+    component: ComponentT;
+
+    constructor(component: ComponentT)
+    {
+        this.component = component;
+    }
+
+    AsType<T>(obj: any)
+    {
+        return new TypedComponentAssert<T>(obj.importFromDataArray(this.component) as T);
+    }
+}
+
+class CommitAssert
+{
+    commit: CommitProposalT;
+
+    constructor(commit: CommitProposalT)
+    {
+        this.commit = commit;
+    }
+
+    ExpectComponents(num: number)
+    {
+        expect_eq(this.commit.diff?.updatedComponents.length, num);
+        return this;
+    }
+
+    Component(num: number)
+    {
+        return new ComponentAssert(this.commit.diff?.updatedComponents[num]!);
+    }
+}
+
+function AssertCommit(commit: CommitProposalT)
+{
+    return new CommitAssert(commit);
+}
+
 describe('Integration Tests', function () {
     describe('Commit', function () {
         it('Committing component should allow retrieval of component', async function () {
@@ -66,14 +118,11 @@ describe('Integration Tests', function () {
             let commit = await ledger.GetCommit(num);
 
             // assert
-            let components = commit.diff?.updatedComponents;
-
-            expect_eq(components?.length, 1);
-
-            components?.forEach((component) => {
-                let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
-                AssertBasicCartesianPoint(cartpoint);
-            });
+            AssertCommit(commit)
+                .ExpectComponents(1)
+                .Component(0)
+                    .AsType<ifc2x3.cartesianpoint>(ifc2x3.cartesianpoint)
+                        .Satisfies(AssertBasicCartesianPoint);
         });
     });
 });
@@ -92,14 +141,11 @@ describe('Integration Tests', function () {
             let commit = await ledgerB.GetCommit(num);
 
             // assert
-            let components = commit.diff?.updatedComponents;
-
-            expect_eq(components?.length, 1);
-
-            components?.forEach((component) => {
-                let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
-                AssertBasicCartesianPoint(cartpoint);
-            });
+            AssertCommit(commit)
+                .ExpectComponents(1)
+                .Component(0)
+                    .AsType<ifc2x3.cartesianpoint>(ifc2x3.cartesianpoint)
+                        .Satisfies(AssertBasicCartesianPoint);
         });
     });
 });

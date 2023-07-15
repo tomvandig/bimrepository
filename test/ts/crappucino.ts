@@ -2,19 +2,19 @@
 // mocha is being difficult and it doesn't do much
 let path: string[] = [];
 
-export function describe(name: string, fn: any)
+export async function describe(name: string, fn: any)
 {
     path.push(name);
     console.log(` [  ] ${path.join("::")}`);
-    fn();
+    await fn();
     path.pop();
 }
 
-export function it(name: string, fn: any)
+export async function it(name: string, fn: any)
 {
     try
     {
-        fn();
+        await fn();
     } catch(e)
     {
         console.log(` --- [FAIL] --- ${path.join("::")}::${name}`);
