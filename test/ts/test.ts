@@ -52,30 +52,35 @@ function expect_eq(result: any, expectation: any)
 class TypedComponentAssert<T>
 {
     obj: T;
+    commitAssert: CommitAssert;
 
-    constructor(obj: T)
+    constructor(obj: T, commit: CommitAssert)
     {
         this.obj = obj;
+        this.commitAssert = commit;
     }
 
     Satisfies(fn: (obj: T)=>void)
     {
         fn(this.obj);
+        return this.commitAssert;
     }
 }
 
 class ComponentAssert
 {
     component: ComponentT;
+    commitAssert: CommitAssert;
 
-    constructor(component: ComponentT)
+    constructor(component: ComponentT, commit: CommitAssert)
     {
         this.component = component;
+        this.commitAssert = commit;
     }
 
     AsType<T>(obj: any)
     {
-        return new TypedComponentAssert<T>(obj.importFromDataArray(this.component) as T);
+        return new TypedComponentAssert<T>(obj.importFromDataArray(this.component) as T, this.commitAssert);
     }
 }
 
@@ -96,7 +101,7 @@ class CommitAssert
 
     Component(num: number)
     {
-        return new ComponentAssert(this.commit.diff?.updatedComponents[num]!);
+        return new ComponentAssert(this.commit.diff?.updatedComponents[num]!, this);
     }
 }
 
