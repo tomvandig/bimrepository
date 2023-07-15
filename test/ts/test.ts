@@ -12,7 +12,20 @@ function GetRemoteServerLedger()
 function GetLocalServerLedger()
 {
     let server = new API();
-    return new LedgerBridge(server);
+    let bridge = new LedgerBridge(server);
+    return new Ledger(bridge);
+}
+
+function GetSharedServerLedger()
+{
+    let server = new API();
+    let bridge = new LedgerBridge(server);
+    let ledgerA = new Ledger(bridge);
+    let ledgerB = new Ledger(bridge);
+    return {
+        ledgerA,
+        ledgerB
+    }
 }
 
 function MakeBasicCartesianPoint()
@@ -44,9 +57,7 @@ describe('Integration Tests', function () {
     describe('Commit', function () {
         it('Committing component should allow retrieval of component', async function () {
             // arrange
-            let serverLedger = GetLocalServerLedger();
-
-            let ledger = new Ledger(serverLedger);
+            let ledger = GetLocalServerLedger();
 
             ledger.update(MakeBasicCartesianPoint());
 
@@ -57,7 +68,33 @@ describe('Integration Tests', function () {
             // assert
             let components = commit.diff?.updatedComponents;
 
-            expect_eq(components?.length, 2);
+            expect_eq(components?.length, 1);
+
+            components?.forEach((component) => {
+                let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
+                AssertBasicCartesianPoint(cartpoint);
+            });
+        });
+    });
+});
+
+
+describe('Integration Tests', function () {
+    describe('Commit', function () {
+        it('Commit from one client is visible in another', async function () {
+            // arrange
+            let { ledgerA, ledgerB } = GetSharedServerLedger();
+
+            ledgerA.update(MakeBasicCartesianPoint());
+
+            // act
+            let num = await ledgerA.commit("bob@bob.com", "I done did a commit2");
+            let commit = await ledgerB.GetCommit(num);
+
+            // assert
+            let components = commit.diff?.updatedComponents;
+
+            expect_eq(components?.length, 1);
 
             components?.forEach((component) => {
                 let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
