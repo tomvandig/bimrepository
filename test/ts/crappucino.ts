@@ -16,8 +16,6 @@ class Test
 
     async exec()
     {
-        console.log(` [  ] ${this.path}`);
-     
         try
         {
             await this.fn();

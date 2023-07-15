@@ -110,9 +110,9 @@ function AssertCommit(commit: CommitProposalT)
     return new CommitAssert(commit);
 }
 
-describe('Integration Tests', function () {
-    describe('Commit', function () {
-        it('Committing component should allow retrieval of component', async function () {
+describe('In the ledger operations', function () {
+    describe('Committing to a ledger', function () {
+        it('should allow retrieval of component', async function () {
             // arrange
             let ledger = GetLocalServerLedger();
 
@@ -129,13 +129,7 @@ describe('Integration Tests', function () {
                     .AsType<ifc2x3.cartesianpoint>(ifc2x3.cartesianpoint)
                         .Satisfies(AssertBasicCartesianPoint);
         });
-    });
-});
-
-
-describe('Integration Tests', function () {
-    describe('Commit', function () {
-        it('Commit from one client is visible in another', async function () {
+        it('should be visible from one client to another', async function () {
             // arrange
             let { ledgerA, ledgerB } = GetSharedServerLedger();
 
