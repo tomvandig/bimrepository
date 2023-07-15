@@ -15,12 +15,21 @@ function GetLocalServerLedger()
     return new LedgerBridge(server);
 }
 
-function MakeCartesianPoint()
+function MakeBasicCartesianPoint()
 {
     let point = new ifc2x3.cartesianpoint();
     point.points = [1,2,33];
     point.cardinality = 3;
     return point;
+}
+
+function AssertBasicCartesianPoint(cartpoint: ifc2x3.cartesianpoint)
+{
+    expect_eq(cartpoint.cardinality, 3);
+    expect_eq(cartpoint.points.length, 3);
+    expect_eq(cartpoint.points[0], 1);
+    expect_eq(cartpoint.points[1], 2);
+    expect_eq(cartpoint.points[2], 33);
 }
 
 function expect_eq(result: any, expectation: any)
@@ -39,7 +48,7 @@ describe('Integration Tests', function () {
 
             let ledger = new Ledger(serverLedger);
 
-            ledger.update(MakeCartesianPoint());
+            ledger.update(MakeBasicCartesianPoint());
 
             // act
             let num = await ledger.commit("bob@bob.com", "I done did a commit2");
@@ -48,15 +57,11 @@ describe('Integration Tests', function () {
             // assert
             let components = commit.diff?.updatedComponents;
 
-            expect_eq(components?.length, 1);
+            expect_eq(components?.length, 2);
 
             components?.forEach((component) => {
                 let cartpoint = ifc2x3.cartesianpoint.importFromDataArray(component);
-                expect_eq(cartpoint.cardinality, 3);
-                expect_eq(cartpoint.points.length, 3);
-                expect_eq(cartpoint.points[0], 1);
-                expect_eq(cartpoint.points[1], 2);
-                expect_eq(cartpoint.points[2], 33);
+                AssertBasicCartesianPoint(cartpoint);
             });
         });
     });
