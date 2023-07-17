@@ -59,24 +59,18 @@ export namespace ifc2x3 {
             
             componentObj.type = ["ifc2x3","cartesianpoint"];
             
-            
             // property points
             componentObj.data.push(MakeArrayStart(this.points.length));
-            this.points.forEach((item) => componentObj.data.push(MakeNumber(item)));
+            this.points.forEach((item) => {
+                componentObj.data.push(MakeNumber(item));
+            });
             componentObj.data.push(MakeArrayEnd());
-            
-            
             // property cardinality
             componentObj.data.push(MakeNumber(this.cardinality));
-            
-            
             // property owner
             componentObj.data.push(MakeString(this.owner));
-            
-            
             // property external
             componentObj.data.push(MakeBool(this.external));
-            
             
             return componentObj;
         }
@@ -159,33 +153,21 @@ export namespace ifc2x3 {
             let obj = new cartesianpoint();
             
             
-            // property points
+            let count = GetArrayStart(componentObj);
+            for (let i = 0; i < count; i++)
             {
-                let count = GetArrayStart(componentObj);
-                for (let i = 0; i < count; i++)
-                {
-                    obj.points.push(GetNumber(componentObj));
-                }
-                Expect(componentObj, ComponentDataType.ArrayEnd);
+                obj.points.push(GetNumber(componentObj));
             }
+            Expect(componentObj, ComponentDataType.ArrayEnd);
             
             
-            // property cardinality
-            {
-                obj.cardinality = GetNumber(componentObj);
-            }
+            obj.cardinality = GetNumber(componentObj);
             
             
-            // property owner
-            {
-                obj.owner = GetString(componentObj);
-            }
+            obj.owner = GetString(componentObj);
             
             
-            // property external
-            {
-                obj.external = GetBool(componentObj);
-            }
+            obj.external = GetBool(componentObj);
             
             
             return obj;
