@@ -12,6 +12,12 @@
         },
         "cardinality": {
             "type": "number"
+        },
+        "owner": {
+            "type": "string"
+        },
+        "external": {
+            "type": "bool"
         }
     }
 }

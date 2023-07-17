@@ -1,7 +1,7 @@
 
 namespace bimrepo;
 
-enum PropertyType : byte { Number = 1, Array }
+enum PropertyType : byte { Number = 1, Array, String, Boolean }
 
 table Items {
     type: PropertyType = Number;

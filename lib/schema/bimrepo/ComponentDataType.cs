@@ -9,8 +9,9 @@ public enum ComponentDataType : sbyte
 {
   Number = 1,
   String = 2,
-  ArrayStart = 3,
-  ArrayEnd = 4,
+  Boolean = 3,
+  ArrayStart = 4,
+  ArrayEnd = 5,
 };
 
 

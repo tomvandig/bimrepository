@@ -45,8 +45,13 @@ str(optionalEncoding?:any):string|Uint8Array|null {
   return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
+boolean():boolean {
+  const offset = this.bb!.__offset(this.bb_pos, 12);
+  return offset ? !!this.bb!.readInt8(this.bb_pos + offset) : false;
+}
+
 static startComponentData(builder:flatbuffers.Builder) {
-  builder.startObject(4);
+  builder.startObject(5);
 }
 
 static addType(builder:flatbuffers.Builder, type:ComponentDataType) {
@@ -65,17 +70,22 @@ static addStr(builder:flatbuffers.Builder, strOffset:flatbuffers.Offset) {
   builder.addFieldOffset(3, strOffset, 0);
 }
 
+static addBoolean(builder:flatbuffers.Builder, boolean:boolean) {
+  builder.addFieldInt8(4, +boolean, +false);
+}
+
 static endComponentData(builder:flatbuffers.Builder):flatbuffers.Offset {
   const offset = builder.endObject();
   return offset;
 }
 
-static createComponentData(builder:flatbuffers.Builder, type:ComponentDataType, arrayLength:number, num:number, strOffset:flatbuffers.Offset):flatbuffers.Offset {
+static createComponentData(builder:flatbuffers.Builder, type:ComponentDataType, arrayLength:number, num:number, strOffset:flatbuffers.Offset, boolean:boolean):flatbuffers.Offset {
   ComponentData.startComponentData(builder);
   ComponentData.addType(builder, type);
   ComponentData.addArrayLength(builder, arrayLength);
   ComponentData.addNum(builder, num);
   ComponentData.addStr(builder, strOffset);
+  ComponentData.addBoolean(builder, boolean);
   return ComponentData.endComponentData(builder);
 }
 
@@ -84,7 +94,8 @@ unpack(): ComponentDataT {
     this.type(),
     this.arrayLength(),
     this.num(),
-    this.str()
+    this.str(),
+    this.boolean()
   );
 }
 
@@ -94,6 +105,7 @@ unpackTo(_o: ComponentDataT): void {
   _o.arrayLength = this.arrayLength();
   _o.num = this.num();
   _o.str = this.str();
+  _o.boolean = this.boolean();
 }
 }
 
@@ -102,7 +114,8 @@ constructor(
   public type: ComponentDataType = ComponentDataType.Number,
   public arrayLength: number = 0,
   public num: number = 0,
-  public str: string|Uint8Array|null = null
+  public str: string|Uint8Array|null = null,
+  public boolean: boolean = false
 ){}
 
 
@@ -113,7 +126,8 @@ pack(builder:flatbuffers.Builder): flatbuffers.Offset {
     this.type,
     this.arrayLength,
     this.num,
-    str
+    str,
+    this.boolean
   );
 }
 }

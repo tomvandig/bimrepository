@@ -29,6 +29,8 @@ function MakeBasicCartesianPoint()
     let point = new ifc2x3.cartesianpoint();
     point.points = [1,2,33];
     point.cardinality = 3;
+    point.external = true;
+    point.owner = "bob";
     return point;
 }
 
@@ -39,6 +41,8 @@ function AssertBasicCartesianPoint(cartpoint: ifc2x3.cartesianpoint)
     expect_eq(cartpoint.points[0], 1);
     expect_eq(cartpoint.points[1], 2);
     expect_eq(cartpoint.points[2], 33);
+    expect_eq(cartpoint.external, true);
+    expect_eq(cartpoint.owner, "bob");
 }
 
 function expect_eq(result: any, expectation: any)

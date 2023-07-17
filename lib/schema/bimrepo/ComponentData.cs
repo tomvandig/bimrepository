@@ -29,25 +29,29 @@ public struct ComponentData : IFlatbufferObject
   public ArraySegment<byte>? GetStrBytes() { return __p.__vector_as_arraysegment(10); }
 #endif
   public byte[] GetStrArray() { return __p.__vector_as_array<byte>(10); }
+  public bool Boolean { get { int o = __p.__offset(12); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
 
   public static Offset<bimrepo.ComponentData> CreateComponentData(FlatBufferBuilder builder,
       bimrepo.ComponentDataType type = bimrepo.ComponentDataType.Number,
       int array_length = 0,
       int num = 0,
-      StringOffset strOffset = default(StringOffset)) {
-    builder.StartTable(4);
+      StringOffset strOffset = default(StringOffset),
+      bool boolean = false) {
+    builder.StartTable(5);
     ComponentData.AddStr(builder, strOffset);
     ComponentData.AddNum(builder, num);
     ComponentData.AddArrayLength(builder, array_length);
+    ComponentData.AddBoolean(builder, boolean);
     ComponentData.AddType(builder, type);
     return ComponentData.EndComponentData(builder);
   }
 
-  public static void StartComponentData(FlatBufferBuilder builder) { builder.StartTable(4); }
+  public static void StartComponentData(FlatBufferBuilder builder) { builder.StartTable(5); }
   public static void AddType(FlatBufferBuilder builder, bimrepo.ComponentDataType type) { builder.AddSbyte(0, (sbyte)type, 1); }
   public static void AddArrayLength(FlatBufferBuilder builder, int arrayLength) { builder.AddInt(1, arrayLength, 0); }
   public static void AddNum(FlatBufferBuilder builder, int num) { builder.AddInt(2, num, 0); }
   public static void AddStr(FlatBufferBuilder builder, StringOffset strOffset) { builder.AddOffset(3, strOffset.Value, 0); }
+  public static void AddBoolean(FlatBufferBuilder builder, bool boolean) { builder.AddBool(4, boolean, false); }
   public static Offset<bimrepo.ComponentData> EndComponentData(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<bimrepo.ComponentData>(o);
@@ -62,6 +66,7 @@ public struct ComponentData : IFlatbufferObject
     _o.ArrayLength = this.ArrayLength;
     _o.Num = this.Num;
     _o.Str = this.Str;
+    _o.Boolean = this.Boolean;
   }
   public static Offset<bimrepo.ComponentData> Pack(FlatBufferBuilder builder, ComponentDataT _o) {
     if (_o == null) return default(Offset<bimrepo.ComponentData>);
@@ -71,7 +76,8 @@ public struct ComponentData : IFlatbufferObject
       _o.Type,
       _o.ArrayLength,
       _o.Num,
-      _str);
+      _str,
+      _o.Boolean);
   }
 }
 
@@ -81,12 +87,14 @@ public class ComponentDataT
   public int ArrayLength { get; set; }
   public int Num { get; set; }
   public string Str { get; set; }
+  public bool Boolean { get; set; }
 
   public ComponentDataT() {
     this.Type = bimrepo.ComponentDataType.Number;
     this.ArrayLength = 0;
     this.Num = 0;
     this.Str = null;
+    this.Boolean = false;
   }
 }
 
@@ -100,6 +108,7 @@ static public class ComponentDataVerify
       && verifier.VerifyField(tablePos, 6 /*ArrayLength*/, 4 /*int*/, 4, false)
       && verifier.VerifyField(tablePos, 8 /*Num*/, 4 /*int*/, 4, false)
       && verifier.VerifyString(tablePos, 10 /*Str*/, false)
+      && verifier.VerifyField(tablePos, 12 /*Boolean*/, 1 /*bool*/, 1, false)
       && verifier.VerifyTableEnd(tablePos);
   }
 }

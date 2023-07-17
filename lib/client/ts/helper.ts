@@ -27,6 +27,18 @@ export function GetArrayStart(component: ComponentT)
     return data.arrayLength;
 }
 
+export function GetString(component: ComponentT)
+{
+    let data = Expect(component, ComponentDataType.String);
+    return data.str as string;
+}
+
+export function GetBool(component: ComponentT)
+{
+    let data = Expect(component, ComponentDataType.Boolean);
+    return data.boolean;
+}
+
 export function MakeArrayStart(length: number)
 {
     let p = new ComponentDataT();
@@ -47,5 +59,21 @@ export function MakeNumber(num: number)
     let p = new ComponentDataT();
     p.type = ComponentDataType.Number;
     p.num = num;
+    return p;
+}
+
+export function MakeString(str: string)
+{
+    let p = new ComponentDataT();
+    p.type = ComponentDataType.String;
+    p.str = str;
+    return p;
+}
+
+export function MakeBool(bool: boolean)
+{
+    let p = new ComponentDataT();
+    p.type = ComponentDataType.Boolean;
+    p.boolean = bool;
     return p;
 }

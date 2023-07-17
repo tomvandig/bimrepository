@@ -17,6 +17,12 @@
         },
         "cardinality": {
             "type": "number"
+        },
+        "owner": {
+            "type": "string"
+        },
+        "external": {
+            "type": "bool"
         }
     }
 }
@@ -24,8 +30,8 @@
 
 import * as flatbuffers from 'flatbuffers';
 import { ECSComponent } from '../../../../lib/client/ts/ecs';
-import { Component, ComponentDataType, ComponentT, ItemsT, PropertyType, SchemaT, propertyT, shapeT } from '../../../../lib/schema/bimrepo';
-import { Expect, GetArrayStart, GetNumber, MakeArrayEnd, MakeArrayStart, MakeNumber } from '../../../../lib/client/ts/helper';
+import { Component, ComponentT, ItemsT, PropertyType, ComponentDataType, SchemaT, propertyT, shapeT } from '../../../../lib/schema/bimrepo';
+import { Expect, GetArrayStart, GetNumber, GetString, GetBool, MakeArrayEnd, MakeArrayStart, MakeNumber, MakeString, MakeBool } from '../../../../lib/client/ts/helper';
 
 export namespace ifc2x3 {
     // TODO: fix
@@ -37,7 +43,9 @@ export namespace ifc2x3 {
         
         // properties
         points: number[] = [];
-        cardinality: number = 0
+        cardinality: number = 0;
+        owner: string = "";
+        external: boolean = false;
         // end properties
         
         // methods
@@ -60,6 +68,14 @@ export namespace ifc2x3 {
             
             // property cardinality
             componentObj.data.push(MakeNumber(this.cardinality));
+            
+            
+            // property owner
+            componentObj.data.push(MakeString(this.owner));
+            
+            
+            // property external
+            componentObj.data.push(MakeBool(this.external));
             
             
             return componentObj;
@@ -104,6 +120,30 @@ export namespace ifc2x3 {
             }
             
             
+            // property owner
+            {
+                let prop_owner = new propertyT();
+                
+                prop_owner.name = "owner";
+                prop_owner.type = PropertyType.String;
+                
+                
+                schemaObj.schemaShape.properties.push(prop_owner);
+            }
+            
+            
+            // property external
+            {
+                let prop_external = new propertyT();
+                
+                prop_external.name = "external";
+                prop_external.type = PropertyType.Boolean;
+                
+                
+                schemaObj.schemaShape.properties.push(prop_external);
+            }
+            
+            
             
             return schemaObj;
         }
@@ -133,6 +173,18 @@ export namespace ifc2x3 {
             // property cardinality
             {
                 obj.cardinality = GetNumber(componentObj);
+            }
+            
+            
+            // property owner
+            {
+                obj.owner = GetString(componentObj);
+            }
+            
+            
+            // property external
+            {
+                obj.external = GetBool(componentObj);
             }
             
             

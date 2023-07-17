@@ -9,6 +9,8 @@ public enum PropertyType : sbyte
 {
   Number = 1,
   Array = 2,
+  String = 3,
+  Boolean = 4,
 };
 
 
