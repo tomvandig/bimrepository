@@ -4,7 +4,7 @@ import { LedgerBridge } from "../../lib/util/ledger_bridge";
 import { ifc2x3 } from "./schema_ts/ts/ifc2x3_cartesianpoint";
 import { describe, it, test } from "./crappucino"
 import { CommitProposalT, ComponentT } from "../../lib/schema/bimrepo";
-import { UUID4 } from "../../lib/client/ts/ecs";
+import { Reference, UUID4 } from "../../lib/client/ts/ecs";
 
 function GetLocalServerLedger()
 {
@@ -25,25 +25,36 @@ function GetSharedServerLedger()
     }
 }
 
+let uuid = new UUID4();
+
 function MakeBasicCartesianPoint()
 {
-    let point = new ifc2x3.cartesianpoint(new UUID4());
+    let point = new ifc2x3.cartesianpoint(uuid);
     point.points = [1,2,33];
     point.cardinality = 3;
     point.external = true;
     point.owner = "bob";
+    point.parent = new Reference<ifc2x3.cartesianpoint>(uuid, 1, 2);
     return point;
 }
 
 function AssertBasicCartesianPoint(cartpoint: ifc2x3.cartesianpoint)
 {
+    expect(cartpoint.getEntityID().equals(uuid));
+
     expect_eq(cartpoint.cardinality, 3);
+
     expect_eq(cartpoint.points.length, 3);
     expect_eq(cartpoint.points[0], 1);
     expect_eq(cartpoint.points[1], 2);
     expect_eq(cartpoint.points[2], 33);
+
     expect_eq(cartpoint.external, true);
     expect_eq(cartpoint.owner, "bob");
+
+    expect(cartpoint.parent?.entity.equals(uuid));
+    expect_eq(cartpoint.parent?.componentID, 1);
+    expect_eq(cartpoint.parent?.componentType, 2);
 }
 
 function expect_eq(result: any, expectation: any)
@@ -51,6 +62,14 @@ function expect_eq(result: any, expectation: any)
     if (result !== expectation)
     {
         throw new Error(`Expected ${expectation} but received ${result}`);
+    }
+}
+
+function expect(result: any)
+{
+    if (!result)
+    {
+        throw new Error(`Expectation failed`);
     }
 }
 

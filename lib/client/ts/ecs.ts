@@ -3,6 +3,13 @@ import * as crypto from "crypto";
 
 export class Reference<T>
 {
+    constructor(entity: UUID4, componentID: number, componentType: number)
+    {
+        this.entity = entity;
+        this.componentID = componentID;
+        this.componentType = componentType;
+    }
+
     entity: UUID4;
     componentID: number;
     componentType: number;
@@ -22,6 +29,11 @@ export class UUID4
         let id = new UUID4();
         id.bytes = new Uint8Array(fb.values);
         return id;
+    }
+
+    public equals(other: UUID4)
+    {
+        return this.bytes.every((val, index) => val === other.bytes[index]);
     }
 }
 

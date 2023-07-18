@@ -52,12 +52,11 @@ export function GetRef<T>(component: ComponentT)
         return null;
     }
 
-    let ref = new Reference<T>();
-    ref.componentID = data.ref?.componentIndex!;
-    ref.componentType = data.ref?.componentType!;
-    ref.entity = UUID4.FromFB(data.ref?.entity!);
-
-    return ref;
+    return new Reference<T>(
+        UUID4.FromFB(data.ref?.entity!),
+        data.ref?.componentIndex!,
+        data.ref?.componentType!
+        );
 }
 
 export function MakeArrayStart(length: number)
@@ -113,6 +112,6 @@ export function MakeRef<T>(ref: Reference<T> | null)
     p.ref = new ComponentIdentifierT();
     p.ref.componentIndex = ref.componentID;
     p.ref.componentType = ref.componentType;
-    p.ref.entity = new uuidv4T(...ref.entity.bytes.entries());
+    p.ref.entity = new uuidv4T([...ref.entity.bytes.values()]);
     return p;
 }
