@@ -35,34 +35,46 @@ idLength():number {
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 }
 
+referenceId():number {
+  const offset = this.bb!.__offset(this.bb_pos, 6);
+  return offset ? this.bb!.readUint16(this.bb_pos + offset) : 0;
+}
+
+hash():string|null
+hash(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+hash(optionalEncoding?:any):string|Uint8Array|null {
+  const offset = this.bb!.__offset(this.bb_pos, 8);
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
+}
+
 schemaversion():string|null
 schemaversion(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
 schemaversion(optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 6);
+  const offset = this.bb!.__offset(this.bb_pos, 10);
   return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
 comment():string|null
 comment(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
 comment(optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 8);
+  const offset = this.bb!.__offset(this.bb_pos, 12);
   return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
 description():string|null
 description(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
 description(optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 10);
+  const offset = this.bb!.__offset(this.bb_pos, 14);
   return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
 schemaShape(obj?:shape):shape|null {
-  const offset = this.bb!.__offset(this.bb_pos, 12);
+  const offset = this.bb!.__offset(this.bb_pos, 16);
   return offset ? (obj || new shape()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 }
 
 static startSchema(builder:flatbuffers.Builder) {
-  builder.startObject(5);
+  builder.startObject(7);
 }
 
 static addId(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset) {
@@ -81,20 +93,28 @@ static startIdVector(builder:flatbuffers.Builder, numElems:number) {
   builder.startVector(4, numElems, 4);
 }
 
+static addReferenceId(builder:flatbuffers.Builder, referenceId:number) {
+  builder.addFieldInt16(1, referenceId, 0);
+}
+
+static addHash(builder:flatbuffers.Builder, hashOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(2, hashOffset, 0);
+}
+
 static addSchemaversion(builder:flatbuffers.Builder, schemaversionOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(1, schemaversionOffset, 0);
+  builder.addFieldOffset(3, schemaversionOffset, 0);
 }
 
 static addComment(builder:flatbuffers.Builder, commentOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(2, commentOffset, 0);
+  builder.addFieldOffset(4, commentOffset, 0);
 }
 
 static addDescription(builder:flatbuffers.Builder, descriptionOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(3, descriptionOffset, 0);
+  builder.addFieldOffset(5, descriptionOffset, 0);
 }
 
 static addSchemaShape(builder:flatbuffers.Builder, schemaShapeOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(4, schemaShapeOffset, 0);
+  builder.addFieldOffset(6, schemaShapeOffset, 0);
 }
 
 static endSchema(builder:flatbuffers.Builder):flatbuffers.Offset {
@@ -114,6 +134,8 @@ static finishSizePrefixedSchemaBuffer(builder:flatbuffers.Builder, offset:flatbu
 unpack(): SchemaT {
   return new SchemaT(
     this.bb!.createScalarList<string>(this.id.bind(this), this.idLength()),
+    this.referenceId(),
+    this.hash(),
     this.schemaversion(),
     this.comment(),
     this.description(),
@@ -124,6 +146,8 @@ unpack(): SchemaT {
 
 unpackTo(_o: SchemaT): void {
   _o.id = this.bb!.createScalarList<string>(this.id.bind(this), this.idLength());
+  _o.referenceId = this.referenceId();
+  _o.hash = this.hash();
   _o.schemaversion = this.schemaversion();
   _o.comment = this.comment();
   _o.description = this.description();
@@ -134,6 +158,8 @@ unpackTo(_o: SchemaT): void {
 export class SchemaT implements flatbuffers.IGeneratedObject {
 constructor(
   public id: (string)[] = [],
+  public referenceId: number = 0,
+  public hash: string|Uint8Array|null = null,
   public schemaversion: string|Uint8Array|null = null,
   public comment: string|Uint8Array|null = null,
   public description: string|Uint8Array|null = null,
@@ -143,6 +169,7 @@ constructor(
 
 pack(builder:flatbuffers.Builder): flatbuffers.Offset {
   const id = Schema.createIdVector(builder, builder.createObjectOffsetList(this.id));
+  const hash = (this.hash !== null ? builder.createString(this.hash!) : 0);
   const schemaversion = (this.schemaversion !== null ? builder.createString(this.schemaversion!) : 0);
   const comment = (this.comment !== null ? builder.createString(this.comment!) : 0);
   const description = (this.description !== null ? builder.createString(this.description!) : 0);
@@ -150,6 +177,8 @@ pack(builder:flatbuffers.Builder): flatbuffers.Offset {
 
   Schema.startSchema(builder);
   Schema.addId(builder, id);
+  Schema.addReferenceId(builder, this.referenceId);
+  Schema.addHash(builder, hash);
   Schema.addSchemaversion(builder, schemaversion);
   Schema.addComment(builder, comment);
   Schema.addDescription(builder, description);

@@ -30,14 +30,17 @@ public struct ComponentData : IFlatbufferObject
 #endif
   public byte[] GetStrArray() { return __p.__vector_as_array<byte>(10); }
   public bool Boolean { get { int o = __p.__offset(12); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
+  public bimrepo.ComponentIdentifier? Ref { get { int o = __p.__offset(14); return o != 0 ? (bimrepo.ComponentIdentifier?)(new bimrepo.ComponentIdentifier()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
 
   public static Offset<bimrepo.ComponentData> CreateComponentData(FlatBufferBuilder builder,
       bimrepo.ComponentDataType type = bimrepo.ComponentDataType.Number,
       int array_length = 0,
       int num = 0,
       StringOffset strOffset = default(StringOffset),
-      bool boolean = false) {
-    builder.StartTable(5);
+      bool boolean = false,
+      Offset<bimrepo.ComponentIdentifier> @refOffset = default(Offset<bimrepo.ComponentIdentifier>)) {
+    builder.StartTable(6);
+    ComponentData.AddRef(builder, @refOffset);
     ComponentData.AddStr(builder, strOffset);
     ComponentData.AddNum(builder, num);
     ComponentData.AddArrayLength(builder, array_length);
@@ -46,12 +49,13 @@ public struct ComponentData : IFlatbufferObject
     return ComponentData.EndComponentData(builder);
   }
 
-  public static void StartComponentData(FlatBufferBuilder builder) { builder.StartTable(5); }
+  public static void StartComponentData(FlatBufferBuilder builder) { builder.StartTable(6); }
   public static void AddType(FlatBufferBuilder builder, bimrepo.ComponentDataType type) { builder.AddSbyte(0, (sbyte)type, 1); }
   public static void AddArrayLength(FlatBufferBuilder builder, int arrayLength) { builder.AddInt(1, arrayLength, 0); }
   public static void AddNum(FlatBufferBuilder builder, int num) { builder.AddInt(2, num, 0); }
   public static void AddStr(FlatBufferBuilder builder, StringOffset strOffset) { builder.AddOffset(3, strOffset.Value, 0); }
   public static void AddBoolean(FlatBufferBuilder builder, bool boolean) { builder.AddBool(4, boolean, false); }
+  public static void AddRef(FlatBufferBuilder builder, Offset<bimrepo.ComponentIdentifier> refOffset) { builder.AddOffset(5, refOffset.Value, 0); }
   public static Offset<bimrepo.ComponentData> EndComponentData(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<bimrepo.ComponentData>(o);
@@ -67,17 +71,20 @@ public struct ComponentData : IFlatbufferObject
     _o.Num = this.Num;
     _o.Str = this.Str;
     _o.Boolean = this.Boolean;
+    _o.Ref = this.Ref.HasValue ? this.Ref.Value.UnPack() : null;
   }
   public static Offset<bimrepo.ComponentData> Pack(FlatBufferBuilder builder, ComponentDataT _o) {
     if (_o == null) return default(Offset<bimrepo.ComponentData>);
     var _str = _o.Str == null ? default(StringOffset) : builder.CreateString(_o.Str);
+    var _ref = _o.Ref == null ? default(Offset<bimrepo.ComponentIdentifier>) : bimrepo.ComponentIdentifier.Pack(builder, _o.Ref);
     return CreateComponentData(
       builder,
       _o.Type,
       _o.ArrayLength,
       _o.Num,
       _str,
-      _o.Boolean);
+      _o.Boolean,
+      _ref);
   }
 }
 
@@ -88,6 +95,7 @@ public class ComponentDataT
   public int Num { get; set; }
   public string Str { get; set; }
   public bool Boolean { get; set; }
+  public bimrepo.ComponentIdentifierT Ref { get; set; }
 
   public ComponentDataT() {
     this.Type = bimrepo.ComponentDataType.Number;
@@ -95,6 +103,7 @@ public class ComponentDataT
     this.Num = 0;
     this.Str = null;
     this.Boolean = false;
+    this.Ref = null;
   }
 }
 
@@ -109,6 +118,7 @@ static public class ComponentDataVerify
       && verifier.VerifyField(tablePos, 8 /*Num*/, 4 /*int*/, 4, false)
       && verifier.VerifyString(tablePos, 10 /*Str*/, false)
       && verifier.VerifyField(tablePos, 12 /*Boolean*/, 1 /*bool*/, 1, false)
+      && verifier.VerifyTable(tablePos, 14 /*Ref*/, bimrepo.ComponentIdentifierVerify.Verify, false)
       && verifier.VerifyTableEnd(tablePos);
   }
 }

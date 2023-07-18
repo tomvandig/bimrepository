@@ -11,6 +11,7 @@ public enum PropertyType : sbyte
   Array = 2,
   String = 3,
   Boolean = 4,
+  Ref = 5,
 };
 
 

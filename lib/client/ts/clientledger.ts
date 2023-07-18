@@ -1,7 +1,7 @@
 import * as flatbuffers from "flatbuffers";
 import axios from "axios";
 import { ECSComponent } from "./ecs";
-import { CommitDiffT, CommitProposal, CommitProposalT } from "../../schema/bimrepo";
+import { CommitDiffT, CommitProposal, CommitProposalT, ComponentIdentifierT, ComponentT, uuidv4T } from "../../schema/bimrepo";
 import { CommitResponse, CommitResponseT } from "../../schema/bimrepo/commit-response";
 
 export class IServerLedger
@@ -46,10 +46,30 @@ export default class ClientLedger {
 
     private modifiedComponents: ECSComponent[] = [];
     private serverLedger: IServerLedger;
+    private componentNameToID: Map<string, number>;
+    private componentIDToName: Map<number, string>;
 
     constructor(serverLedger: IServerLedger)
     {
         this.serverLedger = serverLedger;
+        this.componentNameToID = new Map();
+    }
+
+    GetComponentID(name: string)
+    {
+        if (this.componentNameToID.has(name))
+        {
+            return this.componentNameToID[name];
+        }
+        let id = this.componentNameToID.size;
+        this.componentNameToID.set(name, id);
+        this.componentIDToName.set(id, name);
+        return id;
+    }
+
+    GetComponentName(id: string)
+    {
+        return this.componentIDToName[id];
     }
 
     update(component: ECSComponent)
@@ -61,6 +81,18 @@ export default class ClientLedger {
     canCommit()
     {
         return this.modifiedComponents.length !== 0;
+    }
+
+    private ComponentToIdentifier(component: ECSComponent)
+    {
+        let id = new ComponentIdentifierT();
+
+        // entity id
+        let uuidv4 = new uuidv4T();
+        uuidv4.values = [...component.getEntityID().bytes.values()];
+        id.entity = uuidv4;
+
+        return id;
     }
 
     async commit(author: string, message: string): Promise<number>
@@ -77,7 +109,9 @@ export default class ClientLedger {
         let exportedTypes = {};
 
         this.modifiedComponents.forEach((component) => {
-            commit.diff?.updatedComponents.push(component.exportToDataArray());
+            let exported = component.exportToDataArray(this.ComponentToIdentifier(component));
+
+            commit.diff?.updatedComponents.push(exported);
             let name = component.getSimplifiedName();
             if (!exportedTypes[name])
             {

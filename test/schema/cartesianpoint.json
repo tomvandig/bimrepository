@@ -18,6 +18,11 @@
         },
         "external": {
             "type": "bool"
+        },
+        "parent": {
+            "type": "ref",
+            "nullable": true,
+            "reftype": ["ifc2x3", "cartesianpoint"]
         }
     }
 }

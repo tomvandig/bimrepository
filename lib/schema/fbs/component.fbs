@@ -1,9 +1,21 @@
 
 namespace bimrepo;
 
-enum ComponentDataType: byte { Number = 1, String, Boolean, ArrayStart, ArrayEnd }
+enum ComponentDataType: byte { Number = 1, String, Boolean, ArrayStart, ArrayEnd, Ref, Empty }
 
-// fb guarantees you don't pay for unset table members
+struct uuidv4
+{
+    values: [uint8:16];
+}
+
+table ComponentIdentifier
+{
+    entity: uuidv4;
+    component_type: uint16;
+    component_index: uint16;
+}
+
+// fb guarantees you don't pay (much) for unset table members
 table ComponentData
 {
     type: ComponentDataType = Number;
@@ -11,11 +23,11 @@ table ComponentData
     num: int32;
     str: string;
     boolean: bool;
+    ref: ComponentIdentifier;
 }
 
 table Component {
-    entity: uint32;
-    type: [string];
+    id: ComponentIdentifier;
     data: [ComponentData];
 }
 

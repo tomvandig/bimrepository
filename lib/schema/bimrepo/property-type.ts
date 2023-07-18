@@ -4,5 +4,6 @@ export enum PropertyType {
   Number = 1,
   Array = 2,
   String = 3,
-  Boolean = 4
+  Boolean = 4,
+  Ref = 5
 }

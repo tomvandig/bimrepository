@@ -3,6 +3,7 @@
 import * as flatbuffers from 'flatbuffers';
 
 import { ComponentData, ComponentDataT } from '../bimrepo/component-data.js';
+import { ComponentIdentifier, ComponentIdentifierT } from '../bimrepo/component-identifier.js';
 
 
 export class Component implements flatbuffers.IUnpackableObject<ComponentT> {
@@ -23,59 +24,31 @@ static getSizePrefixedRootAsComponent(bb:flatbuffers.ByteBuffer, obj?:Component)
   return (obj || new Component()).__init(bb.readInt32(bb.position()) + bb.position(), bb);
 }
 
-entity():number {
+id(obj?:ComponentIdentifier):ComponentIdentifier|null {
   const offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? this.bb!.readUint32(this.bb_pos + offset) : 0;
-}
-
-type(index: number):string
-type(index: number,optionalEncoding:flatbuffers.Encoding):string|Uint8Array
-type(index: number,optionalEncoding?:any):string|Uint8Array|null {
-  const offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? this.bb!.__string(this.bb!.__vector(this.bb_pos + offset) + index * 4, optionalEncoding) : null;
-}
-
-typeLength():number {
-  const offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
+  return offset ? (obj || new ComponentIdentifier()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
 }
 
 data(index: number, obj?:ComponentData):ComponentData|null {
-  const offset = this.bb!.__offset(this.bb_pos, 8);
+  const offset = this.bb!.__offset(this.bb_pos, 6);
   return offset ? (obj || new ComponentData()).__init(this.bb!.__indirect(this.bb!.__vector(this.bb_pos + offset) + index * 4), this.bb!) : null;
 }
 
 dataLength():number {
-  const offset = this.bb!.__offset(this.bb_pos, 8);
+  const offset = this.bb!.__offset(this.bb_pos, 6);
   return offset ? this.bb!.__vector_len(this.bb_pos + offset) : 0;
 }
 
 static startComponent(builder:flatbuffers.Builder) {
-  builder.startObject(3);
+  builder.startObject(2);
 }
 
-static addEntity(builder:flatbuffers.Builder, entity:number) {
-  builder.addFieldInt32(0, entity, 0);
-}
-
-static addType(builder:flatbuffers.Builder, typeOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(1, typeOffset, 0);
-}
-
-static createTypeVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
-  builder.startVector(4, data.length, 4);
-  for (let i = data.length - 1; i >= 0; i--) {
-    builder.addOffset(data[i]!);
-  }
-  return builder.endVector();
-}
-
-static startTypeVector(builder:flatbuffers.Builder, numElems:number) {
-  builder.startVector(4, numElems, 4);
+static addId(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(0, idOffset, 0);
 }
 
 static addData(builder:flatbuffers.Builder, dataOffset:flatbuffers.Offset) {
-  builder.addFieldOffset(2, dataOffset, 0);
+  builder.addFieldOffset(1, dataOffset, 0);
 }
 
 static createDataVector(builder:flatbuffers.Builder, data:flatbuffers.Offset[]):flatbuffers.Offset {
@@ -103,45 +76,40 @@ static finishSizePrefixedComponentBuffer(builder:flatbuffers.Builder, offset:fla
   builder.finish(offset, undefined, true);
 }
 
-static createComponent(builder:flatbuffers.Builder, entity:number, typeOffset:flatbuffers.Offset, dataOffset:flatbuffers.Offset):flatbuffers.Offset {
+static createComponent(builder:flatbuffers.Builder, idOffset:flatbuffers.Offset, dataOffset:flatbuffers.Offset):flatbuffers.Offset {
   Component.startComponent(builder);
-  Component.addEntity(builder, entity);
-  Component.addType(builder, typeOffset);
+  Component.addId(builder, idOffset);
   Component.addData(builder, dataOffset);
   return Component.endComponent(builder);
 }
 
 unpack(): ComponentT {
   return new ComponentT(
-    this.entity(),
-    this.bb!.createScalarList<string>(this.type.bind(this), this.typeLength()),
+    (this.id() !== null ? this.id()!.unpack() : null),
     this.bb!.createObjList<ComponentData, ComponentDataT>(this.data.bind(this), this.dataLength())
   );
 }
 
 
 unpackTo(_o: ComponentT): void {
-  _o.entity = this.entity();
-  _o.type = this.bb!.createScalarList<string>(this.type.bind(this), this.typeLength());
+  _o.id = (this.id() !== null ? this.id()!.unpack() : null);
   _o.data = this.bb!.createObjList<ComponentData, ComponentDataT>(this.data.bind(this), this.dataLength());
 }
 }
 
 export class ComponentT implements flatbuffers.IGeneratedObject {
 constructor(
-  public entity: number = 0,
-  public type: (string)[] = [],
+  public id: ComponentIdentifierT|null = null,
   public data: (ComponentDataT)[] = []
 ){}
 
 
 pack(builder:flatbuffers.Builder): flatbuffers.Offset {
-  const type = Component.createTypeVector(builder, builder.createObjectOffsetList(this.type));
+  const id = (this.id !== null ? this.id!.pack(builder) : 0);
   const data = Component.createDataVector(builder, builder.createObjectOffsetList(this.data));
 
   return Component.createComponent(builder,
-    this.entity,
-    type,
+    id,
     data
   );
 }

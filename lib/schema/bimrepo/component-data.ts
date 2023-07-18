@@ -3,6 +3,7 @@
 import * as flatbuffers from 'flatbuffers';
 
 import { ComponentDataType } from '../bimrepo/component-data-type.js';
+import { ComponentIdentifier, ComponentIdentifierT } from '../bimrepo/component-identifier.js';
 
 
 export class ComponentData implements flatbuffers.IUnpackableObject<ComponentDataT> {
@@ -50,8 +51,13 @@ boolean():boolean {
   return offset ? !!this.bb!.readInt8(this.bb_pos + offset) : false;
 }
 
+ref(obj?:ComponentIdentifier):ComponentIdentifier|null {
+  const offset = this.bb!.__offset(this.bb_pos, 14);
+  return offset ? (obj || new ComponentIdentifier()).__init(this.bb!.__indirect(this.bb_pos + offset), this.bb!) : null;
+}
+
 static startComponentData(builder:flatbuffers.Builder) {
-  builder.startObject(5);
+  builder.startObject(6);
 }
 
 static addType(builder:flatbuffers.Builder, type:ComponentDataType) {
@@ -74,20 +80,15 @@ static addBoolean(builder:flatbuffers.Builder, boolean:boolean) {
   builder.addFieldInt8(4, +boolean, +false);
 }
 
+static addRef(builder:flatbuffers.Builder, refOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(5, refOffset, 0);
+}
+
 static endComponentData(builder:flatbuffers.Builder):flatbuffers.Offset {
   const offset = builder.endObject();
   return offset;
 }
 
-static createComponentData(builder:flatbuffers.Builder, type:ComponentDataType, arrayLength:number, num:number, strOffset:flatbuffers.Offset, boolean:boolean):flatbuffers.Offset {
-  ComponentData.startComponentData(builder);
-  ComponentData.addType(builder, type);
-  ComponentData.addArrayLength(builder, arrayLength);
-  ComponentData.addNum(builder, num);
-  ComponentData.addStr(builder, strOffset);
-  ComponentData.addBoolean(builder, boolean);
-  return ComponentData.endComponentData(builder);
-}
 
 unpack(): ComponentDataT {
   return new ComponentDataT(
@@ -95,7 +96,8 @@ unpack(): ComponentDataT {
     this.arrayLength(),
     this.num(),
     this.str(),
-    this.boolean()
+    this.boolean(),
+    (this.ref() !== null ? this.ref()!.unpack() : null)
   );
 }
 
@@ -106,6 +108,7 @@ unpackTo(_o: ComponentDataT): void {
   _o.num = this.num();
   _o.str = this.str();
   _o.boolean = this.boolean();
+  _o.ref = (this.ref() !== null ? this.ref()!.unpack() : null);
 }
 }
 
@@ -115,19 +118,23 @@ constructor(
   public arrayLength: number = 0,
   public num: number = 0,
   public str: string|Uint8Array|null = null,
-  public boolean: boolean = false
+  public boolean: boolean = false,
+  public ref: ComponentIdentifierT|null = null
 ){}
 
 
 pack(builder:flatbuffers.Builder): flatbuffers.Offset {
   const str = (this.str !== null ? builder.createString(this.str!) : 0);
+  const ref = (this.ref !== null ? this.ref!.pack(builder) : 0);
 
-  return ComponentData.createComponentData(builder,
-    this.type,
-    this.arrayLength,
-    this.num,
-    str,
-    this.boolean
-  );
+  ComponentData.startComponentData(builder);
+  ComponentData.addType(builder, this.type);
+  ComponentData.addArrayLength(builder, this.arrayLength);
+  ComponentData.addNum(builder, this.num);
+  ComponentData.addStr(builder, str);
+  ComponentData.addBoolean(builder, this.boolean);
+  ComponentData.addRef(builder, ref);
+
+  return ComponentData.endComponentData(builder);
 }
 }
