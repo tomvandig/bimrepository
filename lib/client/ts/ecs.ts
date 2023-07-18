@@ -1,4 +1,5 @@
-import { ComponentIdentifierT, ComponentT, SchemaT } from '../../schema/bimrepo';
+import { ComponentIdentifierT, ComponentT, SchemaT, uuidv4T } from '../../schema/bimrepo';
+import * as crypto from "crypto";
 
 export class Reference<T>
 {
@@ -12,6 +13,13 @@ export class UUID4
     constructor()
     {
         crypto.getRandomValues(this.bytes);
+    }
+
+    static FromFB(fb: uuidv4T)
+    {
+        let id = new UUID4();
+        id.bytes = new Uint8Array(fb.values);
+        return id;
     }
 }
 

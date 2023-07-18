@@ -39,7 +39,7 @@
 import * as flatbuffers from 'flatbuffers';
 import { ECSComponent, Reference, UUID4 } from '../../../../lib/client/ts/ecs';
 import { Component, ComponentT, ItemsT, PropertyType, ComponentDataType, ComponentIdentifierT, SchemaT, propertyT, shapeT } from '../../../../lib/schema/bimrepo';
-import { Expect, GetArrayStart, GetNumber, GetString, GetBool, MakeArrayEnd, MakeArrayStart, MakeNumber, MakeString, MakeBool } from '../../../../lib/client/ts/helper';
+import { Expect, GetArrayStart, GetNumber, GetString, GetBool, GetRef, MakeRef, MakeArrayEnd, MakeArrayStart, MakeNumber, MakeString, MakeBool } from '../../../../lib/client/ts/helper';
 
 export namespace ifc2x3 {
     // TODO: fix
@@ -80,7 +80,7 @@ export namespace ifc2x3 {
                 // property external
                 componentObj.data.push(MakeBool(this.external));
                 // property parent
-                componentObj.data.push(MakeRef(this.parent));
+                componentObj.data.push(MakeRef(this.parent!));
                 
                 return componentObj;
             }
@@ -89,6 +89,7 @@ export namespace ifc2x3 {
             exportDefinitionToArray(referenceId: number): SchemaT {
                 let schemaObj = new SchemaT();
                 schemaObj.id = ["ifc2x3","cartesianpoint"];
+                schemaObj.referenceId = referenceId;
                 schemaObj.schemaversion = "1";
                 schemaObj.comment = "TODO: fix";
                 schemaObj.description = "Cartesianpoint of ifc version 2x3";
@@ -172,32 +173,32 @@ export namespace ifc2x3 {
             static importFromDataArray(componentObj: ComponentT): cartesianpoint {
                 // TODO: check if component type matches the class
                 
-                let obj = new cartesianpoint();
-                
-                
-                let count = GetArrayStart(componentObj);
-                for (let i = 0; i < count; i++)
-                {
-                    obj.points.push(GetNumber(componentObj));
-                }
-                Expect(componentObj, ComponentDataType.ArrayEnd);
-                
-                
-                obj.cardinality = GetNumber(componentObj);
-                
-                
-                obj.owner = GetString(componentObj);
-                
-                
-                obj.external = GetBool(componentObj);
-                
-                
-                obj.parent = GetRef(componentObj);
-                
-                
-                return obj;
-            }
-            
-            // end statics
-            }
-            }
+                let obj = new cartesianpoint(UUID4.FromFB(componentObj.id?.entity!));
+                    
+                    
+                    let count = GetArrayStart(componentObj);
+                    for (let i = 0; i < count; i++)
+                    {
+                        obj.points.push(GetNumber(componentObj));
+                    }
+                    Expect(componentObj, ComponentDataType.ArrayEnd);
+                    
+                    
+                    obj.cardinality = GetNumber(componentObj);
+                    
+                    
+                    obj.owner = GetString(componentObj);
+                    
+                    
+                    obj.external = GetBool(componentObj);
+                    
+                    
+                    obj.parent = GetRef(componentObj);
+                    
+                    
+                    return obj;
+                    }
+                    
+                    // end statics
+                    }
+                    }

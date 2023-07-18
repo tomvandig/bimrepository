@@ -7,8 +7,9 @@ export class ServerLedger
 {
     private commits: CommitProposalT[];
     private listeners: Map<string, LedgerListener>;
-    private components: Map<number, Map<string, ComponentT>>;
-    private types: Map<string, SchemaT>;
+    private components: Map<number, Map<number, ComponentT>>;
+    private types: Map<number, SchemaT>;
+    private componentNameToID: Map<string, number>;
 
     constructor()
     {
@@ -16,11 +17,25 @@ export class ServerLedger
         this.components = new Map();
         this.commits = [];
         this.listeners = new Map();
+        this.componentNameToID = new Map();
     }
 
     private ComponentTypeAsString(type: string[])
     {
         return type.join("_");
+    }
+
+    private GetComponentTypeID(type: string[])
+    {
+        let str = this.ComponentTypeAsString(type);
+
+        if (this.componentNameToID.has(str))
+        {
+            return this.componentNameToID[str];
+        }
+        let id = this.componentNameToID.size;
+        this.componentNameToID.set(str, id);
+        return id;
     }
 
     private UpdateComponent(component: ComponentT)
@@ -33,21 +48,24 @@ export class ServerLedger
 
         let map = this.components.get(entity)!;
 
-        let type = this.ComponentTypeAsString(component.type);
-        map.set(type, component);
+        map.set(component.id?.componentType!, component);
     }
 
-    private UpdateType(schema: SchemaT)
+    private UpdateType(schema: SchemaT, componentTypeIDMap: Map<number, number>)
     {
-        let type = this.ComponentTypeAsString(schema.id);
+        let updateID = schema.referenceId;
+        let sourceID = this.GetComponentTypeID(schema.id);
 
-        if (this.types.has(type))
+        if (this.types.has(sourceID))
         {
-            console.log(`Type ${type} already exists, ignoring`);
+            console.log(`Type ${schema.id.join("::")} already exists, ignoring`);
             return;
         }
 
-        this.types.set(type, schema);
+        schema.referenceId = sourceID;
+        componentTypeIDMap.set(updateID, sourceID);
+
+        this.types.set(sourceID, schema);
     }
     
     private ValidateComponentForSchema(schema: SchemaT, component: ComponentT)
@@ -58,8 +76,7 @@ export class ServerLedger
 
     private ValidateComponent(component: ComponentT)
     {
-        let type = this.ComponentTypeAsString(component.type);
-
+        let type = component.id?.componentType!;
         if (!this.types.has(type))
         {
             throw new Error(`Unknown component type ${type}`)
@@ -73,12 +90,28 @@ export class ServerLedger
         }
     }
 
+    private RewriteComponentTypeIds(updatedComponent: ComponentT, updateToServerTypeID: Map<number, number>)
+    {
+        let updateID = updatedComponent.id?.componentType!;
+
+        if (!updateToServerTypeID.has(updateID))
+        {
+            throw new Error(`Unknown component type id ${updateID}`);
+        }
+        
+        // rewrite the type ID to correspond to the server
+        updatedComponent.id!.componentType = updateToServerTypeID.get(updateID)!;
+    }
+
     public Commit(proposal: CommitProposalT)
     {
         let id = this.commits.length;
 
+        let componentTypeIDMap = new Map<number, number>();
+
         // process data
-        proposal.diff?.updatedSchemas.forEach(this.UpdateType.bind(this));
+        proposal.diff?.updatedSchemas.forEach((schema: SchemaT) => this.UpdateType(schema, componentTypeIDMap));
+        proposal.diff?.updatedComponents.forEach((component: ComponentT) => this.RewriteComponentTypeIds(component, componentTypeIDMap));
         proposal.diff?.updatedComponents.forEach(this.ValidateComponent.bind(this));
         proposal.diff?.updatedComponents.forEach(this.UpdateComponent.bind(this));
 

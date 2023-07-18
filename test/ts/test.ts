@@ -4,6 +4,7 @@ import { LedgerBridge } from "../../lib/util/ledger_bridge";
 import { ifc2x3 } from "./schema_ts/ts/ifc2x3_cartesianpoint";
 import { describe, it, test } from "./crappucino"
 import { CommitProposalT, ComponentT } from "../../lib/schema/bimrepo";
+import { UUID4 } from "../../lib/client/ts/ecs";
 
 function GetLocalServerLedger()
 {
@@ -26,7 +27,7 @@ function GetSharedServerLedger()
 
 function MakeBasicCartesianPoint()
 {
-    let point = new ifc2x3.cartesianpoint();
+    let point = new ifc2x3.cartesianpoint(new UUID4());
     point.points = [1,2,33];
     point.cardinality = 3;
     point.external = true;

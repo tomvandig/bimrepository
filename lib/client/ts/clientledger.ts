@@ -53,6 +53,7 @@ export default class ClientLedger {
     {
         this.serverLedger = serverLedger;
         this.componentNameToID = new Map();
+        this.componentIDToName = new Map();
     }
 
     GetComponentID(name: string)
@@ -67,7 +68,7 @@ export default class ClientLedger {
         return id;
     }
 
-    GetComponentName(id: string)
+    GetComponentName(id: number)
     {
         return this.componentIDToName[id];
     }
@@ -112,14 +113,15 @@ export default class ClientLedger {
         let exportedTypes = {};
 
         this.modifiedComponents.forEach((component) => {
-            let exported = component.exportToDataArray(this.ComponentToIdentifier(component));
-
+            let id = this.ComponentToIdentifier(component);
+            let exported = component.exportToDataArray(id);
             commit.diff?.updatedComponents.push(exported);
             let name = component.getSimplifiedName();
             if (!exportedTypes[name])
             {
                 exportedTypes[name] = true;
-                commit.diff?.updatedSchemas.push(component.exportDefinitionToArray(this.GetComponentName(name)));
+                let data = component.exportDefinitionToArray(id.componentType);
+                commit.diff?.updatedSchemas.push(data);
             }
         });
 

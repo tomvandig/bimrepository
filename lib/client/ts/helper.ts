@@ -1,4 +1,5 @@
-import { ComponentDataT, ComponentDataType, ComponentT } from "../../schema/bimrepo";
+import { ComponentDataT, ComponentDataType, ComponentIdentifierT, ComponentT, uuidv4T } from "../../schema/bimrepo";
+import { Reference } from "./ecs";
 
 
 export function Expect(component: ComponentT, type: ComponentDataType)
@@ -39,6 +40,15 @@ export function GetBool(component: ComponentT)
     return data.boolean;
 }
 
+export function GetRef<T>(component: ComponentT)
+{
+    let data = Expect(component, ComponentDataType.Ref);
+
+    let ref = new Reference<T>();
+
+    return ref;
+}
+
 export function MakeArrayStart(length: number)
 {
     let p = new ComponentDataT();
@@ -75,5 +85,16 @@ export function MakeBool(bool: boolean)
     let p = new ComponentDataT();
     p.type = ComponentDataType.Boolean;
     p.boolean = bool;
+    return p;
+}
+
+export function MakeRef<T>(ref: Reference<T>)
+{
+    let p = new ComponentDataT();
+    p.type = ComponentDataType.Ref;
+    p.ref = new ComponentIdentifierT();
+    p.ref.componentIndex = 0;
+    p.ref.componentType = 0;
+    p.ref.entity = new uuidv4T([]);
     return p;
 }
