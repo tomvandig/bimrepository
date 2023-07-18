@@ -94,7 +94,7 @@ export default class ClientLedger {
         id.entity = uuidv4;
 
         id.componentType = this.GetComponentID(component.getSimplifiedName());
-        id.componentIndex = 0; // temporarily hardcoded 1 component per entitys
+        id.componentIndex = 0; // temporarily hardcoded 1 component per entity
 
         return id;
     }

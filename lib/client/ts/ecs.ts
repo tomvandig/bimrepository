@@ -3,7 +3,9 @@ import * as crypto from "crypto";
 
 export class Reference<T>
 {
-
+    entity: UUID4;
+    componentID: number;
+    componentType: number;
 }
 
 export class UUID4

@@ -1,8 +1,8 @@
 import { ComponentDataT, ComponentDataType, ComponentIdentifierT, ComponentT, uuidv4T } from "../../schema/bimrepo";
-import { Reference } from "./ecs";
+import { Reference, UUID4 } from "./ecs";
 
 
-export function Expect(component: ComponentT, type: ComponentDataType)
+export function Expect(component: ComponentT, type: ComponentDataType, optional: boolean = false)
 {
     if (component.data.length === 0)
     {
@@ -11,7 +11,10 @@ export function Expect(component: ComponentT, type: ComponentDataType)
     let data = component.data.shift()!;
     if (data.type !== type)
     {
-        throw new Error(`Expected ${type} but received ${data.type}`);
+        if (!(optional && data.type == ComponentDataType.Empty))
+        {
+            throw new Error(`Expected ${type} but received ${data.type}`);
+        }
     }
     return data;
 }
@@ -42,9 +45,17 @@ export function GetBool(component: ComponentT)
 
 export function GetRef<T>(component: ComponentT)
 {
-    let data = Expect(component, ComponentDataType.Ref);
+    let data = Expect(component, ComponentDataType.Ref, true);
+
+    if (data.type == ComponentDataType.Empty)
+    {
+        return null;
+    }
 
     let ref = new Reference<T>();
+    ref.componentID = data.ref?.componentIndex!;
+    ref.componentType = data.ref?.componentType!;
+    ref.entity = UUID4.FromFB(data.ref?.entity!);
 
     return ref;
 }
@@ -88,13 +99,20 @@ export function MakeBool(bool: boolean)
     return p;
 }
 
-export function MakeRef<T>(ref: Reference<T>)
+export function MakeRef<T>(ref: Reference<T> | null)
 {
+    if (!ref)
+    {
+        let p = new ComponentDataT();
+        p.type = ComponentDataType.Empty;
+        return p;
+    }
+
     let p = new ComponentDataT();
     p.type = ComponentDataType.Ref;
     p.ref = new ComponentIdentifierT();
-    p.ref.componentIndex = 0;
-    p.ref.componentType = 0;
-    p.ref.entity = new uuidv4T([]);
+    p.ref.componentIndex = ref.componentID;
+    p.ref.componentType = ref.componentType;
+    p.ref.entity = new uuidv4T(...ref.entity.bytes.entries());
     return p;
 }
