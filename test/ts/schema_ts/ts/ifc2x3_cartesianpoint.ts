@@ -86,7 +86,7 @@ export namespace ifc2x3 {
             }
             
             
-            exportDefinitionToArray(): SchemaT {
+            exportDefinitionToArray(referenceId: number): SchemaT {
                 let schemaObj = new SchemaT();
                 schemaObj.id = ["ifc2x3","cartesianpoint"];
                 schemaObj.schemaversion = "1";

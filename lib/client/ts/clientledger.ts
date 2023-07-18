@@ -92,6 +92,9 @@ export default class ClientLedger {
         uuidv4.values = [...component.getEntityID().bytes.values()];
         id.entity = uuidv4;
 
+        id.componentType = this.GetComponentID(component.getSimplifiedName());
+        id.componentIndex = 0; // temporarily hardcoded 1 component per entitys
+
         return id;
     }
 
@@ -116,7 +119,7 @@ export default class ClientLedger {
             if (!exportedTypes[name])
             {
                 exportedTypes[name] = true;
-                commit.diff?.updatedSchemas.push(component.exportDefinitionToArray());
+                commit.diff?.updatedSchemas.push(component.exportDefinitionToArray(this.GetComponentName(name)));
             }
         });
 

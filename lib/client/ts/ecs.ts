@@ -36,7 +36,7 @@ export class ECSComponent {
         return new ComponentT();
     }
     
-    exportDefinitionToArray(): SchemaT {
+    exportDefinitionToArray(referenceId: number): SchemaT {
         return new SchemaT();
     }
 
