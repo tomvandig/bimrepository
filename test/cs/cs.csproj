@@ -17,11 +17,13 @@
     <Compile Include="..\..\lib\schema\bimrepo\Component.cs" Link="lib\Component.cs" />
     <Compile Include="..\..\lib\schema\bimrepo\ComponentData.cs" Link="lib\ComponentData.cs" />
     <Compile Include="..\..\lib\schema\bimrepo\ComponentDataType.cs" Link="lib\ComponentDataType.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\ComponentIdentifier.cs" Link="lib\ComponentIdentifier.cs" />
     <Compile Include="..\..\lib\schema\bimrepo\Items.cs" Link="lib\Items.cs" />
     <Compile Include="..\..\lib\schema\bimrepo\property.cs" Link="lib\property.cs" />
     <Compile Include="..\..\lib\schema\bimrepo\PropertyType.cs" Link="lib\PropertyType.cs" />
     <Compile Include="..\..\lib\schema\bimrepo\Schema.cs" Link="lib\Schema.cs" />
     <Compile Include="..\..\lib\schema\bimrepo\shape.cs" Link="lib\shape.cs" />
+    <Compile Include="..\..\lib\schema\bimrepo\uuidv4.cs" Link="lib\uuidv4.cs" />
   </ItemGroup>
 
   <ItemGroup>
