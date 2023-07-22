@@ -1,13 +1,24 @@
 
 using bimrepo;
 using Google.FlatBuffers;
+using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using System.Xml.Linq;
 
 public class ClientLedger {
 
     private string address;
     private List<ECSComponent> modifiedComponents = new();
+    private Dictionary<string, UInt16> componentNameToID;
+    private Dictionary<UInt16, string> componentIDToName;
+
+    public ClientLedger(string address)
+    {
+        this.address = address;
+        this.componentIDToName = new();
+        this.componentNameToID = new();
+    }
 
     public static byte[] ReadFully(Stream input)
     {
@@ -23,11 +34,6 @@ public class ClientLedger {
         }
     }
 
-    public ClientLedger(string address)
-    {
-        this.address = address;
-    }
-
     public void update(ECSComponent component)
     {
         // TODO: check for duplicates
@@ -37,6 +43,33 @@ public class ClientLedger {
     public bool canCommit()
     {
         return this.modifiedComponents.Count != 0;
+    }
+
+    private UInt16 GetComponentID(string name)
+    {
+        if (this.componentNameToID.ContainsKey(name))
+        {
+            return this.componentNameToID[name];
+        }
+        var id = (UInt16)this.componentNameToID.Count;
+        this.componentNameToID.Add(name, id);
+        this.componentIDToName.Add(id, name);
+        return id;
+    }
+
+    private ComponentIdentifierT ComponentToIdentifier(ECSComponent component)
+    {
+        var id = new ComponentIdentifierT();
+
+        // entity id
+        var uuidv4 = new uuidv4T();
+        uuidv4.Values = component.getEntityID().bytes;
+        id.Entity = uuidv4;
+
+        id.ComponentType = this.GetComponentID(component.getSimplifiedName());
+        id.ComponentIndex = 0; // temporarily hardcoded 1 component per entity
+
+        return id;
     }
 
     public async Task<int> commit(string author, string message)
@@ -55,12 +88,15 @@ public class ClientLedger {
         var exportedTypes = new Dictionary<string, bool>();
 
         this.modifiedComponents.ForEach((component) => {
-            commit.Diff?.UpdatedComponents.Add(component.exportToDataArray());
+            var id = this.ComponentToIdentifier(component);
+            var exported = component.exportToDataArray(id);
+            commit.Diff?.UpdatedComponents.Add(exported);
             var name = component.getSimplifiedName();
             if (!exportedTypes.ContainsKey(name))
             {
                 exportedTypes[name] = true;
-                commit.Diff?.UpdatedSchemas.Add(component.exportDefinitionToArray());
+                var data = component.exportDefinitionToArray(id.ComponentType);
+                commit.Diff?.UpdatedSchemas.Add(data);
             }
         });
 

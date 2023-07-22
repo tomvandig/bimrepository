@@ -1,5 +1,7 @@
 
 using bimrepo;
+using System.Security.Cryptography;
+using System;
 
 public class Reference<T>
 {
@@ -22,6 +24,10 @@ public class UUID4
     public UUID4()
     {
         bytes = new byte[16];
+
+        // TODO: slow
+        RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+        rng.GetBytes(bytes);
     }
 
     public static UUID4 FromFB(uuidv4T uuid)

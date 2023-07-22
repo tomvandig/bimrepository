@@ -1,12 +1,16 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Drawing;
 
-var point = new ifc2x3.cartesianpoint();
+var entity = new UUID4();
+
+var point = new ifc2x3.cartesianpoint(entity);
 point.cardinality = 3;
 point.points.Add(1);
 point.points.Add(2);
 point.points.Add(33);
-
+point.owner = "bob";
+point.external = true;
+point.parent = new Reference<ifc2x3.cartesianpoint>(entity, 1, 2);
 
 var ledger = new ClientLedger("http://localhost:3000");
 
@@ -27,4 +31,9 @@ components?.ForEach((component) => {
     Console.WriteLine(cartpoint.points[0]);
     Console.WriteLine(cartpoint.points[1]);
     Console.WriteLine(cartpoint.points[2]);
+    Console.WriteLine(cartpoint.owner);
+    Console.WriteLine(cartpoint.external);
+    Console.WriteLine(cartpoint.parent.entity.bytes.ToString());
+    Console.WriteLine(cartpoint.parent.componentID);
+    Console.WriteLine(cartpoint.parent.componentType);
 });

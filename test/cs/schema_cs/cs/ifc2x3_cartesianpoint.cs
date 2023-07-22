@@ -47,11 +47,11 @@ namespace ifc2x3 {
         }
         
         // properties
-        List<int> points = new();
-            int cardinality = 0;
-            string owner = "";
-            bool external = false;
-            Reference<ifc2x3.cartesianpoint> parent = null;
+        public List<int> points = new();
+            public int cardinality = 0;
+            public string owner = "";
+            public bool external = false;
+            public Reference<ifc2x3.cartesianpoint> parent = null;
                 // end properties
                 
                 // methods

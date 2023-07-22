@@ -50,8 +50,8 @@ public class Helper
 
         return new Reference<T>(
             UUID4.FromFB(component.Id.Entity),
-            component.Id.ComponentIndex,
-            component.Id.ComponentType
+            data.Ref.ComponentIndex,
+            data.Ref.ComponentType
         );
     }
 
