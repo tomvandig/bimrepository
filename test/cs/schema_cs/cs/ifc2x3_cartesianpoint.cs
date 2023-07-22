@@ -85,9 +85,10 @@ namespace ifc2x3 {
                         }
                         
                         
-                        public override SchemaT exportDefinitionToArray() {
+                        public override SchemaT exportDefinitionToArray(UInt16 referenceId) {
                             var schemaObj = new SchemaT();
                             schemaObj.Id = new List<string>() { "ifc2x3","cartesianpoint" };
+                                schemaObj.ReferenceId = referenceId;
                                 schemaObj.Schemaversion = "1";
                                 schemaObj.Comment = "TODO: fix";
                                 schemaObj.Description = "Cartesianpoint of ifc version 2x3";
@@ -173,28 +174,53 @@ namespace ifc2x3 {
                                     public static cartesianpoint importFromDataArray(ComponentT componentObj) {
                                         // TODO: check if component type matches the class
                                         
-                                        var obj = new cartesianpoint();
-                                        
-                                        
-                                        // property points
-                                        {
-                                            var count = Helper.GetArrayStart(componentObj);
-                                            for (var i = 0; i < count; i++)
+                                        var obj = new cartesianpoint(UUID4.FromFB(componentObj.Id?.Entity!));
+                                            
+                                            
+                                            // property points
                                             {
-                                                obj.points.Add(Helper.GetNumber(componentObj));
+                                                
+                                                var count = Helper.GetArrayStart(componentObj);
+                                                for (var i = 0; i < count; i++)
+                                                {
+                                                    obj.points.Add(Helper.GetNumber(componentObj));
+                                                }
+                                                Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
+                                                
                                             }
-                                            Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
-                                        }
-                                        
-                                        
-                                        // property cardinality
-                                        {
-                                            obj.cardinality = Helper.GetNumber(componentObj);
-                                        }
-                                        
-                                        <unknown property type string for prop owner
-                                            <unknown property type bool for prop external
-                                                <unknown property type ref for prop parent
+                                            
+                                            
+                                            // property cardinality
+                                            {
+                                                
+                                                obj.cardinality = Helper.GetNumber(componentObj);
+                                                
+                                            }
+                                            
+                                            
+                                            // property owner
+                                            {
+                                                
+                                                obj.owner = Helper.GetString(componentObj);
+                                                
+                                            }
+                                            
+                                            
+                                            // property external
+                                            {
+                                                
+                                                obj.external = Helper.GetBool(componentObj);
+                                                
+                                            }
+                                            
+                                            
+                                            // property parent
+                                            {
+                                                
+                                                obj.parent = Helper.GetRef<cartesianpoint>(componentObj);
+                                                    
+                                                    }
+                                                    
                                                     
                                                     return obj;
                                                     }

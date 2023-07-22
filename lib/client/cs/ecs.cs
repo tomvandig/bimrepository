@@ -57,7 +57,7 @@ public class ECSComponent {
         return new ComponentT();
     }
 
-    public virtual SchemaT exportDefinitionToArray(int referenceId) {
+    public virtual SchemaT exportDefinitionToArray(UInt16 referenceId) {
         return new SchemaT();
     }
     public UUID4 getEntityID()
