@@ -56,14 +56,14 @@ export class ServerLedger
         let updateID = schema.referenceId;
         let sourceID = this.GetComponentTypeID(schema.id);
 
+        componentTypeIDMap.set(updateID, sourceID);
+        schema.referenceId = sourceID;
+
         if (this.types.has(sourceID))
         {
             console.log(`Type ${schema.id.join("::")} already exists, ignoring`);
             return;
         }
-
-        schema.referenceId = sourceID;
-        componentTypeIDMap.set(updateID, sourceID);
 
         this.types.set(sourceID, schema);
     }
