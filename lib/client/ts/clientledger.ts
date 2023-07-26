@@ -3,6 +3,7 @@ import axios from "axios";
 import { ECSComponent } from "./ecs";
 import { CommitDiffT, CommitProposal, CommitProposalT, ComponentIdentifierT, ComponentT, uuidv4T } from "../../schema/bimrepo";
 import { CommitResponse, CommitResponseT } from "../../schema/bimrepo/commit-response";
+import WebSocket from 'ws';
 
 export class IServerLedger
 {
@@ -17,7 +18,7 @@ export class IServerLedger
         if (this.address != "")
         {
             this.ws = new WebSocket(
-                `${this.address}/ws`
+                `ws://${this.address}/ws`
             );
             this.ws.onmessage = (event) => {
                 let head = event.data;
@@ -31,7 +32,7 @@ export class IServerLedger
 
     public async Commit(commitBuffer: Uint8Array)
     {
-        let response = await axios.post(`${this.address}/commit`, 
+        let response = await axios.post(`http://${this.address}/commit`, 
             commitBuffer.buffer
         , {
             headers: {'Content-Type': 'application/octet-stream'},
@@ -42,7 +43,7 @@ export class IServerLedger
 
     public async GetCommit(id: number)
     {
-        let response = await axios.get(`${this.address}/commit/${id}`, {
+        let response = await axios.get(`http://${this.address}/commit/${id}`, {
             responseType: "arraybuffer"
         });
         return toArrayBuffer(response.data);
@@ -70,7 +71,7 @@ export default class ClientLedger {
     private notifyHeadChanged: (head: number) => void | undefined;
     private observedCommits: number[] = [];
 
-    constructor(serverLedger: IServerLedger, )
+    constructor(serverLedger: IServerLedger)
     {
         this.serverLedger = serverLedger;
         serverLedger.NotifyHeadChanged(this.NotifyHeadChanged.bind(this));

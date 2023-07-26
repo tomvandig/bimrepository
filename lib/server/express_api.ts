@@ -2,12 +2,12 @@ import { ByteBuffer, Builder } from "flatbuffers";
 import { CommitProposal, CommitProposalT } from "../schema/bimrepo";
 import { ServerLedger } from "./server_ledger";
 import * as http from "http";
-import { WebSocketServer, WebSocket } from 'ws';
+import * as ws from 'ws';
 import { CommitResponse, CommitResponseT } from "../schema/bimrepo/commit-response";
 import { API, WSListener } from "./api";
 const express = require('express')
 
-const wss = new WebSocketServer({ noServer: true });
+const wss = new ws.WebSocketServer({ noServer: true });
 const app = express()
 const port = 3000
 
@@ -67,7 +67,8 @@ let server = http.createServer(app);
 
 
 server.on('upgrade', function upgrade(request, socket, head) {
-  const { pathname } = new URL(request.url!);
+  const pathname = request.url;
+
   
   if (pathname === '/ws') {
       wss.handleUpgrade(request, socket, head, function done(ws) {
