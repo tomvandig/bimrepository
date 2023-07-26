@@ -15,7 +15,12 @@ point.parent = Reference<ifc2x3.cartesianpoint>.From(point);
 
 var ledger = new ClientLedger("localhost:3000");
 
-var wait = ledger.Listen();
+var wait = ledger.Listen(async (int head) =>
+{
+    var commit = await ledger.GetCommit(head);
+
+    Console.WriteLine($"Fetched commit {commit.Message}");
+});
 
 ledger.update(point);
 

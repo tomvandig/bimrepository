@@ -19,7 +19,7 @@ public class ClientLedger {
         this.address = address;
       }
 
-    public async Task Listen()
+    public async Task Listen(Action<int> headChanged)
     {
         var client = new ClientWebSocket();
         await client.ConnectAsync(new Uri($"ws://{this.address}/ws"), CancellationToken.None);
@@ -33,7 +33,8 @@ public class ClientLedger {
             string s = Encoding.UTF8.GetString(buffer, 0, receiveResult.Count);
 
             int commitId = int.Parse(s);    
-            Console.WriteLine(commitId);
+
+            headChanged(commitId);
             
             if (receiveResult.MessageType == WebSocketMessageType.Close)
             {
