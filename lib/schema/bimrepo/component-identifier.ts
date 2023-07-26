@@ -28,9 +28,11 @@ entity(obj?:uuidv4):uuidv4|null {
   return offset ? (obj || new uuidv4()).__init(this.bb_pos + offset, this.bb!) : null;
 }
 
-componentType():number {
+typeHash():string|null
+typeHash(optionalEncoding:flatbuffers.Encoding):string|Uint8Array|null
+typeHash(optionalEncoding?:any):string|Uint8Array|null {
   const offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? this.bb!.readUint16(this.bb_pos + offset) : 0;
+  return offset ? this.bb!.__string(this.bb_pos + offset, optionalEncoding) : null;
 }
 
 componentIndex():number {
@@ -46,8 +48,8 @@ static addEntity(builder:flatbuffers.Builder, entityOffset:flatbuffers.Offset) {
   builder.addFieldStruct(0, entityOffset, 0);
 }
 
-static addComponentType(builder:flatbuffers.Builder, componentType:number) {
-  builder.addFieldInt16(1, componentType, 0);
+static addTypeHash(builder:flatbuffers.Builder, typeHashOffset:flatbuffers.Offset) {
+  builder.addFieldOffset(1, typeHashOffset, 0);
 }
 
 static addComponentIndex(builder:flatbuffers.Builder, componentIndex:number) {
@@ -59,10 +61,10 @@ static endComponentIdentifier(builder:flatbuffers.Builder):flatbuffers.Offset {
   return offset;
 }
 
-static createComponentIdentifier(builder:flatbuffers.Builder, entityOffset:flatbuffers.Offset, componentType:number, componentIndex:number):flatbuffers.Offset {
+static createComponentIdentifier(builder:flatbuffers.Builder, entityOffset:flatbuffers.Offset, typeHashOffset:flatbuffers.Offset, componentIndex:number):flatbuffers.Offset {
   ComponentIdentifier.startComponentIdentifier(builder);
   ComponentIdentifier.addEntity(builder, entityOffset);
-  ComponentIdentifier.addComponentType(builder, componentType);
+  ComponentIdentifier.addTypeHash(builder, typeHashOffset);
   ComponentIdentifier.addComponentIndex(builder, componentIndex);
   return ComponentIdentifier.endComponentIdentifier(builder);
 }
@@ -70,7 +72,7 @@ static createComponentIdentifier(builder:flatbuffers.Builder, entityOffset:flatb
 unpack(): ComponentIdentifierT {
   return new ComponentIdentifierT(
     (this.entity() !== null ? this.entity()!.unpack() : null),
-    this.componentType(),
+    this.typeHash(),
     this.componentIndex()
   );
 }
@@ -78,7 +80,7 @@ unpack(): ComponentIdentifierT {
 
 unpackTo(_o: ComponentIdentifierT): void {
   _o.entity = (this.entity() !== null ? this.entity()!.unpack() : null);
-  _o.componentType = this.componentType();
+  _o.typeHash = this.typeHash();
   _o.componentIndex = this.componentIndex();
 }
 }
@@ -86,15 +88,17 @@ unpackTo(_o: ComponentIdentifierT): void {
 export class ComponentIdentifierT implements flatbuffers.IGeneratedObject {
 constructor(
   public entity: uuidv4T|null = null,
-  public componentType: number = 0,
+  public typeHash: string|Uint8Array|null = null,
   public componentIndex: number = 0
 ){}
 
 
 pack(builder:flatbuffers.Builder): flatbuffers.Offset {
+  const typeHash = (this.typeHash !== null ? builder.createString(this.typeHash!) : 0);
+
   return ComponentIdentifier.createComponentIdentifier(builder,
     (this.entity !== null ? this.entity!.pack(builder) : 0),
-    this.componentType,
+    typeHash,
     this.componentIndex
   );
 }

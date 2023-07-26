@@ -3,16 +3,21 @@ import * as crypto from "crypto";
 
 export class Reference<T>
 {
-    constructor(entity: UUID4, componentID: number, componentType: number)
+    constructor(entity: UUID4, typeHash: string, componentID: number)
     {
         this.entity = entity;
+        this.typeHash = typeHash;
         this.componentID = componentID;
-        this.componentType = componentType;
+    }
+
+    static From<T extends ECSComponent>(component: T)
+    {
+        return new Reference<T>(component.getEntityID(), component.getTypeHash(), 0);
     }
 
     entity: UUID4;
+    typeHash: string;
     componentID: number;
-    componentType: number;
 }
 
 export class UUID4
@@ -40,12 +45,19 @@ export class UUID4
 export class ECSComponent {
 
     private simplifiedName: string;
+    private typeHash: string;
     private entityID: UUID4;
 
-    constructor(name: string, entityID: UUID4)
+    constructor(name: string, hash: string, entityID: UUID4)
     {
         this.simplifiedName = name;
         this.entityID = entityID;
+        this.typeHash = hash;
+    }
+
+    getTypeHash()
+    {
+        return this.typeHash;
     }
 
     getSimplifiedName()
@@ -58,7 +70,7 @@ export class ECSComponent {
         return new ComponentT();
     }
     
-    exportDefinitionToArray(referenceId: number): SchemaT {
+    exportDefinitionToArray(): SchemaT {
         return new SchemaT();
     }
 

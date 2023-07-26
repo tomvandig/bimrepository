@@ -54,8 +54,8 @@ export function GetRef<T>(component: ComponentT)
 
     return new Reference<T>(
         UUID4.FromFB(data.ref?.entity!),
-        data.ref?.componentIndex!,
-        data.ref?.componentType!
+        data.ref?.typeHash as string,
+        data.ref?.componentIndex!
         );
 }
 
@@ -111,7 +111,7 @@ export function MakeRef<T>(ref: Reference<T> | null)
     p.type = ComponentDataType.Ref;
     p.ref = new ComponentIdentifierT();
     p.ref.componentIndex = ref.componentID;
-    p.ref.componentType = ref.componentType;
+    p.ref.typeHash = ref.typeHash;
     p.ref.entity = new uuidv4T([...ref.entity.bytes.values()]);
     return p;
 }

@@ -67,16 +67,12 @@ export default class ClientLedger {
 
     private modifiedComponents: ECSComponent[] = [];
     private serverLedger: IServerLedger;
-    private componentNameToID: Map<string, number>;
-    private componentIDToName: Map<number, string>;
     private notifyHeadChanged: (head: number) => void | undefined;
     private observedCommits: number[] = [];
 
     constructor(serverLedger: IServerLedger, )
     {
         this.serverLedger = serverLedger;
-        this.componentNameToID = new Map();
-        this.componentIDToName = new Map();
         serverLedger.NotifyHeadChanged(this.NotifyHeadChanged.bind(this));
     }
 
@@ -92,23 +88,6 @@ export default class ClientLedger {
         {
             this.notifyHeadChanged(head);
         }
-    }
-
-    GetComponentID(name: string)
-    {
-        if (this.componentNameToID.has(name))
-        {
-            return this.componentNameToID[name];
-        }
-        let id = this.componentNameToID.size;
-        this.componentNameToID.set(name, id);
-        this.componentIDToName.set(id, name);
-        return id;
-    }
-
-    GetComponentName(id: number)
-    {
-        return this.componentIDToName[id];
     }
 
     update(component: ECSComponent)
@@ -131,7 +110,7 @@ export default class ClientLedger {
         uuidv4.values = [...component.getEntityID().bytes.values()];
         id.entity = uuidv4;
 
-        id.componentType = this.GetComponentID(component.getSimplifiedName());
+        id.typeHash = component.getTypeHash();
         id.componentIndex = 0; // temporarily hardcoded 1 component per entity
 
         return id;
@@ -158,7 +137,7 @@ export default class ClientLedger {
             if (!exportedTypes[name])
             {
                 exportedTypes[name] = true;
-                let data = component.exportDefinitionToArray(id.componentType);
+                let data = component.exportDefinitionToArray();
                 commit.diff?.updatedSchemas.push(data);
             }
         });

@@ -11,7 +11,7 @@ struct uuidv4
 table ComponentIdentifier
 {
     entity: uuidv4;
-    component_type: uint16;
+    type_hash: string;
     component_index: uint16;
 }
 

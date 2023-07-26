@@ -46,7 +46,7 @@ export namespace ifc2x3 {
     export class cartesianpoint extends ECSComponent {
         
         constructor(id: UUID4) {
-            super("ifc2x3_cartesianpoint", id);
+            super("ifc2x3_cartesianpoint", "8d7331108c75b5a83eba9590fd9cf25dd4a50848ea9ade10023db7a2b6f2189a", id);
         }
         
         // properties
@@ -86,10 +86,10 @@ export namespace ifc2x3 {
             }
             
             
-            exportDefinitionToArray(referenceId: number): SchemaT {
+            exportDefinitionToArray(): SchemaT {
                 let schemaObj = new SchemaT();
                 schemaObj.id = ["ifc2x3","cartesianpoint"];
-                schemaObj.referenceId = referenceId;
+                schemaObj.hash = this.getTypeHash();
                 schemaObj.schemaversion = "1";
                 schemaObj.comment = "TODO: fix";
                 schemaObj.description = "Cartesianpoint of ifc version 2x3";
@@ -176,24 +176,49 @@ export namespace ifc2x3 {
                 let obj = new cartesianpoint(UUID4.FromFB(componentObj.id?.entity!));
                     
                     
-                    let count = GetArrayStart(componentObj);
-                    for (let i = 0; i < count; i++)
+                    // property points
                     {
-                        obj.points.push(GetNumber(componentObj));
+                        
+                        let count = GetArrayStart(componentObj);
+                        for (let i = 0; i < count; i++)
+                        {
+                            obj.points.push(GetNumber(componentObj));
+                        }
+                        Expect(componentObj, ComponentDataType.ArrayEnd);
+                        
                     }
-                    Expect(componentObj, ComponentDataType.ArrayEnd);
                     
                     
-                    obj.cardinality = GetNumber(componentObj);
+                    // property cardinality
+                    {
+                        
+                        obj.cardinality = GetNumber(componentObj);
+                        
+                    }
                     
                     
-                    obj.owner = GetString(componentObj);
+                    // property owner
+                    {
+                        
+                        obj.owner = GetString(componentObj);
+                        
+                    }
                     
                     
-                    obj.external = GetBool(componentObj);
+                    // property external
+                    {
+                        
+                        obj.external = GetBool(componentObj);
+                        
+                    }
                     
                     
-                    obj.parent = GetRef(componentObj);
+                    // property parent
+                    {
+                        
+                        obj.parent = GetRef(componentObj);
+                        
+                    }
                     
                     
                     return obj;

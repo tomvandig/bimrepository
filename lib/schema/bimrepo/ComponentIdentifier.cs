@@ -20,23 +20,29 @@ public struct ComponentIdentifier : IFlatbufferObject
   public ComponentIdentifier __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
   public bimrepo.uuidv4? Entity { get { int o = __p.__offset(4); return o != 0 ? (bimrepo.uuidv4?)(new bimrepo.uuidv4()).__assign(o + __p.bb_pos, __p.bb) : null; } }
-  public ushort ComponentType { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetUshort(o + __p.bb_pos) : (ushort)0; } }
+  public string TypeHash { get { int o = __p.__offset(6); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetTypeHashBytes() { return __p.__vector_as_span<byte>(6, 1); }
+#else
+  public ArraySegment<byte>? GetTypeHashBytes() { return __p.__vector_as_arraysegment(6); }
+#endif
+  public byte[] GetTypeHashArray() { return __p.__vector_as_array<byte>(6); }
   public ushort ComponentIndex { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetUshort(o + __p.bb_pos) : (ushort)0; } }
 
   public static Offset<bimrepo.ComponentIdentifier> CreateComponentIdentifier(FlatBufferBuilder builder,
       bimrepo.uuidv4T entity = null,
-      ushort component_type = 0,
+      StringOffset type_hashOffset = default(StringOffset),
       ushort component_index = 0) {
     builder.StartTable(3);
+    ComponentIdentifier.AddTypeHash(builder, type_hashOffset);
     ComponentIdentifier.AddEntity(builder, bimrepo.uuidv4.Pack(builder, entity));
     ComponentIdentifier.AddComponentIndex(builder, component_index);
-    ComponentIdentifier.AddComponentType(builder, component_type);
     return ComponentIdentifier.EndComponentIdentifier(builder);
   }
 
   public static void StartComponentIdentifier(FlatBufferBuilder builder) { builder.StartTable(3); }
   public static void AddEntity(FlatBufferBuilder builder, Offset<bimrepo.uuidv4> entityOffset) { builder.AddStruct(0, entityOffset.Value, 0); }
-  public static void AddComponentType(FlatBufferBuilder builder, ushort componentType) { builder.AddUshort(1, componentType, 0); }
+  public static void AddTypeHash(FlatBufferBuilder builder, StringOffset typeHashOffset) { builder.AddOffset(1, typeHashOffset.Value, 0); }
   public static void AddComponentIndex(FlatBufferBuilder builder, ushort componentIndex) { builder.AddUshort(2, componentIndex, 0); }
   public static Offset<bimrepo.ComponentIdentifier> EndComponentIdentifier(FlatBufferBuilder builder) {
     int o = builder.EndTable();
@@ -49,15 +55,16 @@ public struct ComponentIdentifier : IFlatbufferObject
   }
   public void UnPackTo(ComponentIdentifierT _o) {
     _o.Entity = this.Entity.HasValue ? this.Entity.Value.UnPack() : null;
-    _o.ComponentType = this.ComponentType;
+    _o.TypeHash = this.TypeHash;
     _o.ComponentIndex = this.ComponentIndex;
   }
   public static Offset<bimrepo.ComponentIdentifier> Pack(FlatBufferBuilder builder, ComponentIdentifierT _o) {
     if (_o == null) return default(Offset<bimrepo.ComponentIdentifier>);
+    var _type_hash = _o.TypeHash == null ? default(StringOffset) : builder.CreateString(_o.TypeHash);
     return CreateComponentIdentifier(
       builder,
       _o.Entity,
-      _o.ComponentType,
+      _type_hash,
       _o.ComponentIndex);
   }
 }
@@ -65,12 +72,12 @@ public struct ComponentIdentifier : IFlatbufferObject
 public class ComponentIdentifierT
 {
   public bimrepo.uuidv4T Entity { get; set; }
-  public ushort ComponentType { get; set; }
+  public string TypeHash { get; set; }
   public ushort ComponentIndex { get; set; }
 
   public ComponentIdentifierT() {
     this.Entity = new bimrepo.uuidv4T();
-    this.ComponentType = 0;
+    this.TypeHash = null;
     this.ComponentIndex = 0;
   }
 }
@@ -82,7 +89,7 @@ static public class ComponentIdentifierVerify
   {
     return verifier.VerifyTableStart(tablePos)
       && verifier.VerifyField(tablePos, 4 /*Entity*/, 16 /*bimrepo.uuidv4*/, 1, false)
-      && verifier.VerifyField(tablePos, 6 /*ComponentType*/, 2 /*ushort*/, 2, false)
+      && verifier.VerifyString(tablePos, 6 /*TypeHash*/, false)
       && verifier.VerifyField(tablePos, 8 /*ComponentIndex*/, 2 /*ushort*/, 2, false)
       && verifier.VerifyTableEnd(tablePos);
   }

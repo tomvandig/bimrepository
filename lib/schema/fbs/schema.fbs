@@ -19,7 +19,6 @@ table shape {
 
 table Schema {
     id: [string];
-    reference_id: uint16;
     hash: string;
     schemaversion: string;
     comment: string;

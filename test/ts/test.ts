@@ -35,7 +35,7 @@ function MakeBasicCartesianPoint()
     point.cardinality = 3;
     point.external = true;
     point.owner = "bob";
-    point.parent = new Reference<ifc2x3.cartesianpoint>(uuid, 1, 2);
+    point.parent = Reference.From(point);
     return point;
 }
 
@@ -54,8 +54,8 @@ function AssertBasicCartesianPoint(cartpoint: ifc2x3.cartesianpoint)
     expect_eq(cartpoint.owner, "bob");
 
     expect(cartpoint.parent?.entity.equals(uuid));
-    expect_eq(cartpoint.parent?.componentID, 1);
-    expect_eq(cartpoint.parent?.componentType, 2);
+    expect_eq(cartpoint.parent?.componentID, 0);
+    expect_eq(cartpoint.parent?.typeHash, cartpoint.getTypeHash());
 }
 
 function expect_eq(result: any, expectation: any)
