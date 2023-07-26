@@ -50,8 +50,8 @@ public class Helper
 
         return new Reference<T>(
             UUID4.FromFB(component.Id.Entity),
-            data.Ref.ComponentIndex,
-            data.Ref.ComponentType
+            data.Ref.TypeHash,
+            data.Ref.ComponentIndex
         );
     }
 
@@ -114,7 +114,7 @@ public class Helper
         p.Type = ComponentDataType.Ref;
         p.Ref = new ComponentIdentifierT();
         p.Ref.ComponentIndex = reference.componentID;
-        p.Ref.ComponentType = reference.componentType;
+        p.Ref.TypeHash = reference.typeHash;
         p.Ref.Entity = new uuidv4T();
         p.Ref.Entity.Values = reference.entity.bytes;
         return p;

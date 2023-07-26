@@ -6,15 +6,20 @@ using System;
 public class Reference<T>
 {
     public UUID4 entity;
+    public string typeHash;
     public UInt16 componentID;
-    public UInt16 componentType;
 
-    public Reference(UUID4 entity, UInt16 componentID, UInt16 componentType)
+    public Reference(UUID4 entity, string typeHash, UInt16 componentID)
     {
         this.entity = entity;
         this.componentID = componentID;
-        this.componentType = componentType;
-    }   
+        this.typeHash = typeHash;
+    }
+
+    public static Reference<T> From<T>(T component) where T : ECSComponent
+    {
+        return new Reference<T>(component.getEntityID(), component.getTypeHash(), 0);
+    }
 }
 
 public class UUID4
@@ -45,12 +50,14 @@ public class UUID4
 public class ECSComponent {
 
     private string simplifiedName;
+    private string typeHash;
     private UUID4 entityID;
 
-    public ECSComponent(string name, UUID4 entityID)
+    public ECSComponent(string name, string typeHash, UUID4 entityID)
     {
         this.simplifiedName = name;
-        this.entityID = entityID;   
+        this.entityID = entityID;
+        this.typeHash = typeHash;
     }
 
     public string getSimplifiedName()
@@ -58,12 +65,17 @@ public class ECSComponent {
         return this.simplifiedName;
     }
 
+    public string getTypeHash()
+    {
+        return this.typeHash;
+    }
+
     public virtual ComponentT exportToDataArray(ComponentIdentifierT id)
     {
         return new ComponentT();
     }
 
-    public virtual SchemaT exportDefinitionToArray(UInt16 referenceId) {
+    public virtual SchemaT exportDefinitionToArray() {
         return new SchemaT();
     }
     public UUID4 getEntityID()

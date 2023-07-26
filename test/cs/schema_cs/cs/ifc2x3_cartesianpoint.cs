@@ -42,7 +42,7 @@ namespace ifc2x3 {
     // TODO: fix
     public class cartesianpoint : ECSComponent {
         
-        public cartesianpoint(UUID4 id) : base("ifc2x3_cartesianpoint", id) {
+        public cartesianpoint(UUID4 id) : base("ifc2x3_cartesianpoint", "8d7331108c75b5a83eba9590fd9cf25dd4a50848ea9ade10023db7a2b6f2189a", id) {
             
         }
         
@@ -85,10 +85,10 @@ namespace ifc2x3 {
                         }
                         
                         
-                        public override SchemaT exportDefinitionToArray(UInt16 referenceId) {
+                        public override SchemaT exportDefinitionToArray() {
                             var schemaObj = new SchemaT();
                             schemaObj.Id = new List<string>() { "ifc2x3","cartesianpoint" };
-                                schemaObj.ReferenceId = referenceId;
+                                schemaObj.Hash = this.getTypeHash();
                                 schemaObj.Schemaversion = "1";
                                 schemaObj.Comment = "TODO: fix";
                                 schemaObj.Description = "Cartesianpoint of ifc version 2x3";

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "sha.js": "^2.4.11"
+  }
+}

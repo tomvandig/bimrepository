@@ -10,14 +10,10 @@ public class ClientLedger {
 
     private string address;
     private List<ECSComponent> modifiedComponents = new();
-    private Dictionary<string, UInt16> componentNameToID;
-    private Dictionary<UInt16, string> componentIDToName;
 
     public ClientLedger(string address)
     {
         this.address = address;
-        this.componentIDToName = new();
-        this.componentNameToID = new();
     }
 
     public static byte[] ReadFully(Stream input)
@@ -45,18 +41,6 @@ public class ClientLedger {
         return this.modifiedComponents.Count != 0;
     }
 
-    private UInt16 GetComponentID(string name)
-    {
-        if (this.componentNameToID.ContainsKey(name))
-        {
-            return this.componentNameToID[name];
-        }
-        var id = (UInt16)this.componentNameToID.Count;
-        this.componentNameToID.Add(name, id);
-        this.componentIDToName.Add(id, name);
-        return id;
-    }
-
     private ComponentIdentifierT ComponentToIdentifier(ECSComponent component)
     {
         var id = new ComponentIdentifierT();
@@ -66,7 +50,7 @@ public class ClientLedger {
         uuidv4.Values = component.getEntityID().bytes;
         id.Entity = uuidv4;
 
-        id.ComponentType = this.GetComponentID(component.getSimplifiedName());
+        id.TypeHash = component.getTypeHash();
         id.ComponentIndex = 0; // temporarily hardcoded 1 component per entity
 
         return id;
@@ -95,7 +79,7 @@ public class ClientLedger {
             if (!exportedTypes.ContainsKey(name))
             {
                 exportedTypes[name] = true;
-                var data = component.exportDefinitionToArray(id.ComponentType);
+                var data = component.exportDefinitionToArray();
                 commit.Diff?.UpdatedSchemas.Add(data);
             }
         });
