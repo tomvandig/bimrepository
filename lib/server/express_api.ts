@@ -18,7 +18,7 @@ let api = new API();
 
 wss.on('connection', function connection(connection) {
   let client = new WSListener((id: number)=>{
-    connection.send(id);
+    connection.send(`${id}`);
   });
 
   api.AddConnection(client);
@@ -72,7 +72,7 @@ server.on('upgrade', function upgrade(request, socket, head) {
   
   if (pathname === '/ws') {
       wss.handleUpgrade(request, socket, head, function done(ws) {
-        wss.emit('connection', ws, request);
+        wss.emit('connection', ws, request);  
       });
   } else {
     socket.destroy();

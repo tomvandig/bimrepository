@@ -1,10 +1,13 @@
 
 using bimrepo;
 using Google.FlatBuffers;
+using System.Net.WebSockets;
+using System;
 using System.ComponentModel;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Xml.Linq;
+using System.Text;
 
 public class ClientLedger {
 
@@ -14,6 +17,29 @@ public class ClientLedger {
     public ClientLedger(string address)
     {
         this.address = address;
+      }
+
+    public async Task Listen()
+    {
+        var client = new ClientWebSocket();
+        await client.ConnectAsync(new Uri($"ws://{this.address}/ws"), CancellationToken.None);
+
+        var ReceiveBufferSize = 1024;
+        var buffer = new byte[ReceiveBufferSize];
+        while (true)
+        {
+            var receiveResult = await client.ReceiveAsync(buffer, CancellationToken.None);
+
+            string s = Encoding.UTF8.GetString(buffer, 0, receiveResult.Count);
+
+            int commitId = int.Parse(s);    
+            Console.WriteLine(commitId);
+            
+            if (receiveResult.MessageType == WebSocketMessageType.Close)
+            {
+                break;
+            }
+        }
     }
 
     public static byte[] ReadFully(Stream input)
@@ -88,7 +114,7 @@ public class ClientLedger {
 
         fbb.Finish(CommitProposal.Pack(fbb, commit).Value);
 
-        var requestURL = $"{this.address}/commit";
+        var requestURL = $"http://{this.address}/commit";
         // do request with fbb
         var arr = fbb.DataBuffer.ToSizedArray();
         var content = new ByteArrayContent(arr);
@@ -107,7 +133,7 @@ public class ClientLedger {
     public async Task<CommitProposalT> GetCommit(int id)
     {
         using HttpClient client = new();
-        var url = $"{this.address}/commit/{id}";
+        var url = $"http://{this.address}/commit/{id}";
         var response = await client.GetAsync(url);
         var responseStream = await response.Content.ReadAsStreamAsync();
         var bytes = ReadFully(responseStream);

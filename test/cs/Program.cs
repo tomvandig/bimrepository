@@ -13,8 +13,9 @@ point.owner = "bob";
 point.external = true;
 point.parent = Reference<ifc2x3.cartesianpoint>.From(point);
 
-var ledger = new ClientLedger("http://localhost:3000");
+var ledger = new ClientLedger("localhost:3000");
 
+var wait = ledger.Listen();
 
 ledger.update(point);
 
@@ -38,3 +39,5 @@ components?.ForEach((component) => {
     Console.WriteLine(cartpoint.parent.componentID);
     Console.WriteLine(cartpoint.parent.typeHash);
 });
+
+await wait;
