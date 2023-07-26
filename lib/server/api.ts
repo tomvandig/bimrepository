@@ -1,8 +1,8 @@
+import crypto from "crypto"
 import { ByteBuffer, Builder } from "flatbuffers";
 import { CommitProposal, CommitProposalT } from "../schema/bimrepo";
 import { ServerLedger } from "./server_ledger";
 import { CommitResponse, CommitResponseT } from "../schema/bimrepo/commit-response";
-
 
 function uuidv4() {
   return (<any>[1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>

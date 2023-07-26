@@ -7,10 +7,26 @@ import { CommitResponse, CommitResponseT } from "../../schema/bimrepo/commit-res
 export class IServerLedger
 {
     private address: string;
-
+    protected notifyHeadChanged: (head: number) => void | undefined;
+    private ws: WebSocket;
+    
     constructor(address: string)
     {
         this.address = address;
+
+        if (this.address != "")
+        {
+            this.ws = new WebSocket(
+                `${this.address}/ws`
+            );
+            this.ws.onmessage = (event) => {
+                let head = event.data;
+                if (this.notifyHeadChanged)
+                {
+                    this.notifyHeadChanged(head);
+                }
+            };
+        }
     }
 
     public async Commit(commitBuffer: Uint8Array)
@@ -31,6 +47,11 @@ export class IServerLedger
         });
         return toArrayBuffer(response.data);
     }
+
+    public async NotifyHeadChanged(headChanged: (head: number)=>void)
+    {
+        this.notifyHeadChanged = headChanged;
+    }
 }
 
 function toArrayBuffer(buffer) {
@@ -48,12 +69,29 @@ export default class ClientLedger {
     private serverLedger: IServerLedger;
     private componentNameToID: Map<string, number>;
     private componentIDToName: Map<number, string>;
+    private notifyHeadChanged: (head: number) => void | undefined;
+    private observedCommits: number[] = [];
 
-    constructor(serverLedger: IServerLedger)
+    constructor(serverLedger: IServerLedger, )
     {
         this.serverLedger = serverLedger;
         this.componentNameToID = new Map();
         this.componentIDToName = new Map();
+        serverLedger.NotifyHeadChanged(this.NotifyHeadChanged.bind(this));
+    }
+
+    public SetNotifyHeadChanged(headChanged: (head: number) => void)
+    {
+        this.notifyHeadChanged = headChanged;
+    }
+
+    private NotifyHeadChanged(head: number)
+    {
+        this.observedCommits.push(head);
+        if (this.notifyHeadChanged)
+        {
+            this.notifyHeadChanged(head);
+        }
     }
 
     GetComponentID(name: string)

@@ -16,9 +16,10 @@ function GetLocalServerLedger()
 function GetSharedServerLedger()
 {
     let server = new API();
-    let bridge = new LedgerBridge(server);
-    let ledgerA = new Ledger(bridge);
-    let ledgerB = new Ledger(bridge);
+    let bridgeA = new LedgerBridge(server);
+    let bridgeB = new LedgerBridge(server);
+    let ledgerA = new Ledger(bridgeA);
+    let ledgerB = new Ledger(bridgeB);
     return {
         ledgerA,
         ledgerB
@@ -156,6 +157,13 @@ describe('In the ledger operations', function () {
         it('should be visible from one client to another', async function () {
             // arrange
             let { ledgerA, ledgerB } = GetSharedServerLedger();
+            
+            ledgerA.SetNotifyHeadChanged((head: number) => {
+                console.log(`Received ${head} on A`);
+            })
+            ledgerB.SetNotifyHeadChanged((head: number) => {
+                console.log(`Received ${head} on B`);
+            })
 
             ledgerA.update(MakeBasicCartesianPoint());
 
