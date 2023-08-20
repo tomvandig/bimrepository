@@ -34,16 +34,35 @@ export class WSListener
 export class API
 {
   connections = new Map<string, WSListener>();
-  ledger = new ServerLedger();
+  ledgers = new Map<string, ServerLedger>();
 
   constructor()
   {
-    this.ledger.AddListener("api", (commit: number) => {
+  }
+
+  public AddLedger(name: string)
+  {
+    let ledger = new ServerLedger(name);
+    this.ledgers.set(name, ledger);
+    
+    ledger.AddListener("api", (commit: number) => {
       this.connections.forEach((conn) => {
         // TODO: filter
         conn.notifyHeadChanged(commit);
       })
     });
+
+    return ledger;
+  }
+
+  public GetLedger(name: string)
+  {
+    return this.ledgers.get(name);
+  }
+
+  public GetLedgers()
+  {
+    return [...this.ledgers.values()];
   }
 
   public AddConnection(listener: WSListener)

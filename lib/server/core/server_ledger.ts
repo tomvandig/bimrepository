@@ -7,17 +7,24 @@ type Entity = number;
 
 export class ServerLedger
 {
+    private name: string;
     private commits: CommitProposalT[];
     private listeners: Map<string, LedgerListener>;
     private components: Map<Entity, Map<string, ComponentT>>;
     private types: Map<string, SchemaT>;
 
-    constructor()
+    constructor(name: string)
     {
+        this.name = name;
         this.types = new Map();
         this.components = new Map();
         this.commits = [];
         this.listeners = new Map();
+    }
+
+    public GetName()
+    {
+        return this.name;
     }
 
     private ComponentTypeAsString(type: string[])
