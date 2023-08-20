@@ -4,7 +4,7 @@ import { ServerLedger } from "../core/server_ledger";
 
 function RenderLedger(ledger: ServerLedger)
 {
-    return ledger.GetName();
+    return { name: ledger.GetName(), head: ledger.GetHead() };
 }
 
 export default function init(app: Express, api: API)

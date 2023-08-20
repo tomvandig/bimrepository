@@ -9,6 +9,7 @@ html(lang='en')
     section.app
       section.main
         main(class='container')
-          h1 #{ledger}
+          h1 #{ledger.name} 
+          h2 head: #{ledger.head}
 
     script(src='https://unpkg.com/htmx.org@1.3.1')
