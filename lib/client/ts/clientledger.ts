@@ -8,11 +8,13 @@ import WebSocket from 'ws';
 export class IServerLedger
 {
     private address: string;
+    private ledgername: string;
     protected notifyHeadChanged: (head: number) => void | undefined;
     private ws: WebSocket;
     
-    constructor(address: string)
+    constructor(address: string, ledgername: string)
     {
+        this.ledgername = ledgername;
         this.address = address;
 
         if (this.address != "")
@@ -32,7 +34,7 @@ export class IServerLedger
 
     public async Commit(commitBuffer: Uint8Array)
     {
-        let response = await axios.post(`http://${this.address}/commit`, 
+        let response = await axios.post(`http://${this.address}/${this.ledgername}/commit`, 
             commitBuffer.buffer
         , {
             headers: {'Content-Type': 'application/octet-stream'},
@@ -43,7 +45,7 @@ export class IServerLedger
 
     public async GetCommit(id: number)
     {
-        let response = await axios.get(`http://${this.address}/commit/${id}`, {
+        let response = await axios.get(`http://${this.address}/${this.ledgername}/commit/${id}`, {
             responseType: "arraybuffer"
         });
         return toArrayBuffer(response.data);

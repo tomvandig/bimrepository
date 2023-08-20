@@ -12,11 +12,13 @@ using System.Text;
 public class ClientLedger {
 
     private string address;
+    private string ledgername;
     private List<ECSComponent> modifiedComponents = new();
 
-    public ClientLedger(string address)
+    public ClientLedger(string address, string ledgername)
     {
         this.address = address;
+        this.ledgername = ledgername;
       }
 
     public async Task Listen(Action<int> headChanged)
@@ -115,7 +117,7 @@ public class ClientLedger {
 
         fbb.Finish(CommitProposal.Pack(fbb, commit).Value);
 
-        var requestURL = $"http://{this.address}/commit";
+        var requestURL = $"http://{this.address}/{this.ledgername}/commit";
         // do request with fbb
         var arr = fbb.DataBuffer.ToSizedArray();
         var content = new ByteArrayContent(arr);
@@ -134,7 +136,7 @@ public class ClientLedger {
     public async Task<CommitProposalT> GetCommit(int id)
     {
         using HttpClient client = new();
-        var url = $"http://{this.address}/commit/{id}";
+        var url = $"http://{this.address}/{this.ledgername}/commit/{id}";
         var response = await client.GetAsync(url);
         var responseStream = await response.Content.ReadAsStreamAsync();
         var bytes = ReadFully(responseStream);

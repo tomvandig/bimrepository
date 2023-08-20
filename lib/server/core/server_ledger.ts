@@ -97,7 +97,7 @@ export class ServerLedger
 
     public GetHead()
     {
-        return this.commits.length - 1;
+        return this.commits.length;
     }
 
     public GetCommit(id: number)
