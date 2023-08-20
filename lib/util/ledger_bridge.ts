@@ -1,5 +1,5 @@
 import { IServerLedger } from "../client/ts/clientledger";
-import { API, WSListener } from "../server/api";
+import { API, WSListener } from "../server/core/api";
 
 
 export class LedgerBridge extends IServerLedger
@@ -9,8 +9,9 @@ export class LedgerBridge extends IServerLedger
 
     constructor(api: API)
     {
-        super("");
+        super("", "");
         this.api = api;
+        this.api.AddLedger(this.ledgername);
         this.wsListener = new WSListener(this.InternalNotifyHeadChanged.bind(this));
         this.api.AddConnection(this.wsListener);
     }
@@ -22,12 +23,12 @@ export class LedgerBridge extends IServerLedger
 
     public async Commit(commitBuffer: Uint8Array)
     {
-        return this.api.Commit(commitBuffer);   
+        return this.api.Commit(this.ledgername, commitBuffer)!;   
     }
 
     public async GetCommit(id: number)
     {
-        return this.api.GetCommit(id);
+        return this.api.GetCommit(this.ledgername, id)!;
     }
 
 }

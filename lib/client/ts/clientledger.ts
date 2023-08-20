@@ -8,7 +8,7 @@ import WebSocket from 'ws';
 export class IServerLedger
 {
     private address: string;
-    private ledgername: string;
+    protected ledgername: string;
     protected notifyHeadChanged: (head: number) => void | undefined;
     private ws: WebSocket;
     

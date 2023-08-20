@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "esbuild test.ts --bundle  --platform=node --outfile=bundle.js --external:flatbuffers --external:axios && node bundle.js",
+    "test": "esbuild test.ts --bundle  --platform=node --outfile=bundle.js --external:flatbuffers --external:axios --external:ws && node bundle.js",
     "playground": "esbuild playground.ts --bundle  --platform=node --outfile=playground.js --external:flatbuffers --external:ws --external:axios && node playground.js",
     "gen": "node ../../lib/codegen/convert_ts.js ../schema/cartesianpoint.json ./schema_ts/ ../../../../lib"
   },
