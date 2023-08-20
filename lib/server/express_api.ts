@@ -1,11 +1,9 @@
-import { ByteBuffer, Builder } from "flatbuffers";
-import { CommitProposal, CommitProposalT } from "../schema/bimrepo";
-import { ServerLedger } from "./server_ledger";
 import * as http from "http";
 import * as ws from 'ws';
-import { CommitResponse, CommitResponseT } from "../schema/bimrepo/commit-response";
-import { API, WSListener } from "./api";
-const express = require('express')
+import { API, WSListener } from "./core/api";
+import express from "express";
+import presentation_api from "./api/presentation_api";
+import data_api from "./api/data_api";
 
 const wss = new ws.WebSocketServer({ noServer: true });
 const app = express()
@@ -13,8 +11,10 @@ const port = 3000
 
 app.use(express.raw());
 
-
 let api = new API();
+
+presentation_api(app, api);
+data_api(app, api);
 
 wss.on('connection', function connection(connection) {
   let client = new WSListener((id: number)=>{
@@ -34,37 +34,7 @@ wss.on('connection', function connection(connection) {
   });
 });
 
-function toArrayBuffer(buffer) {
-    const arrayBuffer = new ArrayBuffer(buffer.length);
-    const view = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < buffer.length; ++i) {
-      view[i] = buffer[i];
-    }
-    return view;
-  }
-
-  function toBuffer(arrayBuffer) {
-    const buffer = Buffer.alloc(arrayBuffer.byteLength);
-    const view = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < buffer.length; ++i) {
-      buffer[i] = view[i];
-    }
-    return buffer;
-  }
-
-app.post('/commit', (req, res) => {
-    let buf = toArrayBuffer(req.body);
-
-    res.send(toBuffer(api.Commit(buf)));
-})
-
-app.get('/commit/:id', (req, res) => {
-  
-  res.send(toBuffer(api.GetCommit(req.params.id)))
-})
-
 let server = http.createServer(app);
-
 
 server.on('upgrade', function upgrade(request, socket, head) {
   const pathname = request.url;
@@ -80,5 +50,5 @@ server.on('upgrade', function upgrade(request, socket, head) {
 });
 
 server.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`Repo at port: ${port}`)
 });

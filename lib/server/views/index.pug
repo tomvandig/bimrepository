@@ -1,0 +1,24 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', type='text/css', href='  https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css')
+    title bimrepo
+  body
+    section.app
+      section.main
+        main(class='container')
+          h1 Ledgers
+          form(hx-post="/ledgers", hx-target="#ledger-list", hx-swap="beforeend", hx-on::after-request="console.log('hi')")
+            input(name="ledgerName",placeholder='Add new ledger', autofocus='')
+          table
+            tbody#ledger-list
+              tr
+                th Name
+                th Commits
+                th Upstream
+              each ledger in ledgers
+                include ledger_header.pug
+
+    script(src='https://unpkg.com/htmx.org@1.3.1')
