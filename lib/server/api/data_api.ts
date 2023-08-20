@@ -21,13 +21,17 @@ export default function Init(app: Express, api: API)
       return buffer;
     }
   
-  app.post('/commit', (req, res) => {
+  app.post('/:ledgername/commit', (req, res) => {
+      const ledgerName = req.params.ledgername;
+
       let buf = toArrayBuffer(req.body);
   
-      res.send(toBuffer(api.Commit(buf)));
+      res.send(toBuffer(api.Commit(ledgerName, buf)));
   })
   
-  app.get('/commit/:id', (req, res) => {
-    res.send(toBuffer(api.GetCommit(parseInt(req.params.id))))
+  app.get('/:ledgername/commit/:id', (req, res) => {
+    const ledgerName = req.params.ledgername;
+    
+    res.send(toBuffer(api.GetCommit(ledgerName, parseInt(req.params.id))))
   })
 }

@@ -75,12 +75,21 @@ export class API
     this.connections.delete(id);
   }
 
-  public Commit(buf: Uint8Array)
+  public GetHead(name: string)
   {
+    return this.ledgers.get(name)?.GetHead();
+  }
+
+  public Commit(name: string, buf: Uint8Array)
+  {
+    let ledger = this.ledgers.get(name);
+
+    if (!ledger) return null;
+
     let commitProposal = new CommitProposalT();
     CommitProposal.getRootAsCommitProposal(new ByteBuffer(buf)).unpackTo(commitProposal);
 
-    let response = new CommitResponseT(this.ledger.Commit(commitProposal));
+    let response = new CommitResponseT(ledger.Commit(commitProposal));
 
     let fbb = new Builder(1);
     CommitResponse.finishCommitResponseBuffer(fbb, response.pack(fbb));
@@ -89,9 +98,13 @@ export class API
     return responseBuffer;
   }
 
-  public GetCommit(id: number)
+  public GetCommit(name: string, id: number)
   {
-    let commit = this.ledger.GetCommit(id);
+    let ledger = this.ledgers.get(name);
+
+    if (!ledger) return null;
+
+    let commit = ledger.GetCommit(id);
 
     let fbb = new Builder(1);
     CommitProposal.finishCommitProposalBuffer(fbb, commit.pack(fbb));

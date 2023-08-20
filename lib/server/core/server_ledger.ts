@@ -95,6 +95,11 @@ export class ServerLedger
         return id;
     }
 
+    public GetHead()
+    {
+        return this.commits.length - 1;
+    }
+
     public GetCommit(id: number)
     {
         return this.commits[id];
