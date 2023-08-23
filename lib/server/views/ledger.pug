@@ -12,8 +12,8 @@ html(lang='en')
           a(class="primary outline" href=`/`) back
 
           h1 #{ledger.name} 
-          h2(hx-get=`${ledger.name}/head`, hx-trigger="every 1s") #{ledger.head}
+          h4(hx-get=`${ledger.name}/head`, hx-trigger="load,every 1s") #{ledger.head} 
 
-          div(hx-get=`${ledger.name}/commit/latest`, hx-trigger="every 1s")
+          div(hx-get=`${ledger.name}/commit/latest`, hx-trigger="load,every 1s")
 
     script(src='https://unpkg.com/htmx.org@1.3.1')
