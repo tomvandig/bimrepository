@@ -1,0 +1,13 @@
+
+table
+  tbody#commit-list
+    tr
+    th Message
+    th Author
+    th Diff
+    each commit in commits
+        tr 
+            td 
+                a(class="primary outline" href=`/ledger/`) #{commit.message}
+            td #{commit.author}
+            td #{commit.diffString}

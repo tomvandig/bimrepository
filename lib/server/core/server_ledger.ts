@@ -104,6 +104,11 @@ export class ServerLedger
     {
         return this.commits[id];
     }
+    
+    public GetCommits(count: number)
+    {
+        return this.commits.slice(this.commits.length - count);
+    }
 
     private Notify(id: number)
     {
