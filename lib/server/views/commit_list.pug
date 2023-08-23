@@ -8,6 +8,6 @@ table
     each commit in commits
         tr 
             td 
-                a(class="primary outline" href=`/ledger/`) #{commit.message}
+                a(class="primary outline" href=`/ledger/${commit.ledger}/commit/${commit.id}`) #{commit.message}
             td #{commit.author}
             td #{commit.diffString}

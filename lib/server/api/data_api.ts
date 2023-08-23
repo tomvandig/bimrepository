@@ -21,7 +21,7 @@ export default function Init(app: Express, api: API)
       return buffer;
     }
   
-  app.post('/:ledgername/commit', (req, res) => {
+  app.post('/data/:ledgername/commit', (req, res) => {
       const ledgerName = req.params.ledgername;
 
       let buf = toArrayBuffer(req.body);
@@ -29,7 +29,7 @@ export default function Init(app: Express, api: API)
       res.send(toBuffer(api.Commit(ledgerName, buf)));
   })
   
-  app.get('/:ledgername/commit/:id', (req, res) => {
+  app.get('/data/:ledgername/commit/:id', (req, res) => {
     const ledgerName = req.params.ledgername;
     
     res.send(toBuffer(api.GetCommit(ledgerName, parseInt(req.params.id))))

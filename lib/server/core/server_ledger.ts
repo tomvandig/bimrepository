@@ -5,10 +5,16 @@ type LedgerListener = (number) => void;
 
 type Entity = number;
 
+export class Commit
+{
+    id: number;
+    proposal: CommitProposalT;
+}
+
 export class ServerLedger
 {
     private name: string;
-    private commits: CommitProposalT[];
+    private commits: Commit[];
     private listeners: Map<string, LedgerListener>;
     private components: Map<Entity, Map<string, ComponentT>>;
     private types: Map<string, SchemaT>;
@@ -25,11 +31,6 @@ export class ServerLedger
     public GetName()
     {
         return this.name;
-    }
-
-    private ComponentTypeAsString(type: string[])
-    {
-        return type.join("_");
     }
 
     private UpdateComponent(component: ComponentT)
@@ -78,17 +79,25 @@ export class ServerLedger
         }
     }
 
+    private AddCommit(proposal: CommitProposalT)
+    {
+        let commit = new Commit();
+        commit.proposal = proposal;
+        commit.id = this.commits.length;
+        this.commits.push(commit);
+
+        return commit.id;
+    }
+
     public Commit(proposal: CommitProposalT)
     {
-        let id = this.commits.length;
-
         // process data
         proposal.diff?.updatedSchemas.forEach((schema: SchemaT) => this.UpdateType(schema));
         proposal.diff?.updatedComponents.forEach(this.ValidateComponent.bind(this));
         proposal.diff?.updatedComponents.forEach(this.UpdateComponent.bind(this));
 
         // return commit status
-        this.commits.push(proposal);
+        let id = this.AddCommit(proposal);
 
         this.Notify(id);
 

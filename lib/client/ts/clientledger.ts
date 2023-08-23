@@ -32,9 +32,14 @@ export class IServerLedger
         }
     }
 
+    private GetURL()
+    {
+        return `http://${this.address}/data/${this.ledgername}`;
+    }
+
     public async Commit(commitBuffer: Uint8Array)
     {
-        let response = await axios.post(`http://${this.address}/${this.ledgername}/commit`, 
+        let response = await axios.post(`${this.GetURL()}/commit`, 
             commitBuffer.buffer
         , {
             headers: {'Content-Type': 'application/octet-stream'},
@@ -45,7 +50,7 @@ export class IServerLedger
 
     public async GetCommit(id: number)
     {
-        let response = await axios.get(`http://${this.address}/${this.ledgername}/commit/${id}`, {
+        let response = await axios.get(`${this.GetURL()}/commit/${id}`, {
             responseType: "arraybuffer"
         });
         return toArrayBuffer(response.data);

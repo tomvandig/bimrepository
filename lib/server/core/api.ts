@@ -107,7 +107,7 @@ export class API
     let commit = ledger.GetCommit(id);
 
     let fbb = new Builder(1);
-    CommitProposal.finishCommitProposalBuffer(fbb, commit.pack(fbb));
+    CommitProposal.finishCommitProposalBuffer(fbb, commit.proposal.pack(fbb));
     let responseBuffer = fbb.asUint8Array().slice(0);
 
     return responseBuffer;

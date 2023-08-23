@@ -85,6 +85,11 @@ public class ClientLedger {
         return id;
     }
 
+    private string GetURL()
+    {
+        return $"http://{this.address}/data/{this.ledgername}";
+    }
+
     public async Task<int> commit(string author, string message)
     {
         if (!this.canCommit()) throw new Exception($"No components to commit");
@@ -117,7 +122,7 @@ public class ClientLedger {
 
         fbb.Finish(CommitProposal.Pack(fbb, commit).Value);
 
-        var requestURL = $"http://{this.address}/{this.ledgername}/commit";
+        var requestURL = $"{this.GetURL()}/commit";
         // do request with fbb
         var arr = fbb.DataBuffer.ToSizedArray();
         var content = new ByteArrayContent(arr);
@@ -136,7 +141,7 @@ public class ClientLedger {
     public async Task<CommitProposalT> GetCommit(int id)
     {
         using HttpClient client = new();
-        var url = $"http://{this.address}/{this.ledgername}/commit/{id}";
+        var url = $"{this.GetURL()}/commit/{id}";
         var response = await client.GetAsync(url);
         var responseStream = await response.Content.ReadAsStreamAsync();
         var bytes = ReadFully(responseStream);
