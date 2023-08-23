@@ -93,7 +93,7 @@ export default function init(app: Express, api: API)
         }
         else
         {
-            res.send(JSON.stringify(ledger.GetCommit(commitId)));
+            res.json(ledger.GetCommit(commitId));
         }
     });
 
