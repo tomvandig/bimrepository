@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5B4AE2B3-F245-4A6F-8849-8638D4E0218D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>revit</RootNamespace>
+    <AssemblyName>revit</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\lib\client\cs\clientledger.cs">
+      <Link>lib\clientledger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\client\cs\ecs.cs">
+      <Link>lib\ecs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\client\cs\helper.cs">
+      <Link>lib\helper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\CommitDiff.cs">
+      <Link>lib\CommitDiff.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\CommitProposal.cs">
+      <Link>lib\CommitProposal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\CommitResponse.cs">
+      <Link>lib\CommitResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\Component.cs">
+      <Link>lib\Component.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\ComponentData.cs">
+      <Link>lib\ComponentData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\ComponentDataType.cs">
+      <Link>lib\ComponentDataType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\ComponentIdentifier.cs">
+      <Link>lib\ComponentIdentifier.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\Items.cs">
+      <Link>lib\Items.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\property.cs">
+      <Link>lib\property.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\PropertyType.cs">
+      <Link>lib\PropertyType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\Schema.cs">
+      <Link>lib\Schema.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\shape.cs">
+      <Link>lib\shape.cs</Link>
+    </Compile>
+    <Compile Include="..\..\lib\schema\bimrepo\uuidv4.cs">
+      <Link>lib\uuidv4.cs</Link>
+    </Compile>
+    <Compile Include="plugin.cs" />
+    <Compile Include="schema_cs\cs\ifc2x3_cartesianpoint.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Google.FlatBuffers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a5f9b243cdbcd871, processorArchitecture=MSIL">
+      <HintPath>..\cs\packages\Google.FlatBuffers.23.5.26\lib\net46\Google.FlatBuffers.dll</HintPath>
+    </Reference>
+    <Reference Include="RevitAPI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2024\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

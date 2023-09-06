@@ -3,17 +3,20 @@ using bimrepo;
 using Google.FlatBuffers;
 using System.Net.WebSockets;
 using System;
-using System.ComponentModel;
 using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Xml.Linq;
+using System.Threading.Tasks;
+using System.IO;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Net.Http;
+
 
 public class ClientLedger {
 
     private string address;
     private string ledgername;
-    private List<ECSComponent> modifiedComponents = new();
+    private List<ECSComponent> modifiedComponents = new List<ECSComponent>();
 
     public ClientLedger(string address, string ledgername)
     {
@@ -30,7 +33,7 @@ public class ClientLedger {
         var buffer = new byte[ReceiveBufferSize];
         while (true)
         {
-            var receiveResult = await client.ReceiveAsync(buffer, CancellationToken.None);
+            var receiveResult = await client.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
             string s = Encoding.UTF8.GetString(buffer, 0, receiveResult.Count);
 
@@ -126,7 +129,7 @@ public class ClientLedger {
         // do request with fbb
         var arr = fbb.DataBuffer.ToSizedArray();
         var content = new ByteArrayContent(arr);
-        using HttpClient client = new();
+        HttpClient client = new HttpClient();
         content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
         var response = await client.PostAsync(requestURL, content);
         var responseStream = await response.Content.ReadAsStreamAsync();
@@ -140,7 +143,7 @@ public class ClientLedger {
 
     public async Task<CommitProposalT> GetCommit(int id)
     {
-        using HttpClient client = new();
+        HttpClient client = new HttpClient();
         var url = $"{this.GetURL()}/commit/{id}";
         var response = await client.GetAsync(url);
         var responseStream = await response.Content.ReadAsStreamAsync();

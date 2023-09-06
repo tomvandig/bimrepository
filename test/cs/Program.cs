@@ -13,7 +13,7 @@ point.owner = "bob";
 point.external = true;
 point.parent = Reference<ifc2x3.cartesianpoint>.From(point);
 
-var ledger = new ClientLedger("localhost:3000");
+var ledger = new ClientLedger("localhost:3000", "ledger");
 
 var wait = ledger.Listen(async (int head) =>
 {

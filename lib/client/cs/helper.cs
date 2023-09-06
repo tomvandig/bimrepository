@@ -1,5 +1,6 @@
 using bimrepo;
 
+using System;
 
 public class Helper
 {
@@ -10,7 +11,7 @@ public class Helper
             throw new Exception($"Expected ${ type } but reached end of data");
         }
 
-        var data = component.Data.ElementAt(0);
+        var data = component.Data[0];
         component.Data.RemoveAt(0);
         if (data.Type != type)
         {
