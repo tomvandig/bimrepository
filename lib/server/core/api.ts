@@ -84,7 +84,11 @@ export class API
   {
     let ledger = this.ledgers.get(name);
 
-    if (!ledger) return null;
+    if (!ledger)
+    {
+      console.log(`Ledger ${name} not found`);
+      return null;
+    }
 
     let commitProposal = new CommitProposalT();
     CommitProposal.getRootAsCommitProposal(new ByteBuffer(buf)).unpackTo(commitProposal);
@@ -102,7 +106,11 @@ export class API
   {
     let ledger = this.ledgers.get(name);
 
-    if (!ledger) return null;
+    if (!ledger)
+    {
+      console.log(`Ledger ${name} not found`);
+      return null;
+    }
 
     let commit = ledger.GetCommit(id);
 
