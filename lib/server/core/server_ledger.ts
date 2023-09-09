@@ -116,7 +116,14 @@ export class ServerLedger
     
     public GetCommits(count: number)
     {
-        return this.commits.slice(this.commits.length - count);
+        let result: Commit[] = [];
+
+        for (let i = Math.max(this.commits.length - count, 0); i < this.commits.length; i++)
+        {
+            result.push(this.commits[i]);
+        }
+
+        return result;
     }
 
     private Notify(id: number)

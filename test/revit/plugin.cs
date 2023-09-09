@@ -9,43 +9,74 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Autodesk.Revit.DB.Architecture;
+using Autodesk.Revit.DB.Events;
+using Autodesk.Revit.UI.Events;
+using System.Diagnostics;
 
-namespace Lab1PlaceGroup
+namespace IFC5
 {
     [Transaction(TransactionMode.Manual)]
     [Regeneration(RegenerationOption.Manual)]
-    public class plugin : IExternalCommand
+    public class LedgerPlugin : IExternalCommand
     {
-        async void publish()
+        ClientLedger ledger;
+
+        public void setup(UIApplication application)
         {
-            var entity = new UUID4();
+            application.Application.DocumentChanged += new EventHandler
+                       <Autodesk.Revit.DB.Events.DocumentChangedEventArgs>(application_DocumentChanged);
 
-            var point = new ifc2x3.cartesianpoint(entity);
-            point.cardinality = 3;
-            point.points.Add(1);
-            point.points.Add(2);
-            point.points.Add(33);
-            point.owner = "bob";
-            point.external = true;
-            point.parent = Reference<ifc2x3.cartesianpoint>.From(point);
-
-            var ledger = new ClientLedger("localhost:3000", "ledger");
+            this.ledger = new ClientLedger("localhost:3000", "ledger");
 
             var wait = ledger.Listen(async (int head) =>
             {
                 var commit = await ledger.GetCommit(head);
 
-                Console.WriteLine($"Fetched commit {commit.Message}");
+                Debug.WriteLine($"Fetched commit {head}");
             });
+        }
 
-            ledger.update(point);
+        public async void application_DocumentChanged(object sender, DocumentChangedEventArgs args)
+        {
+            Debug.WriteLine($"Doc changed");
+            try
+            {
+                Document doc = args.GetDocument();
 
-            var num = await ledger.commit("bob@bob.com", "I done did a commit2");
+
+                var added = args.GetAddedElementIds();
+
+                var modified = args.GetModifiedElementIds();
+
+                var deleted = args.GetDeletedElementIds();
+
+                if (added.Count > 0)
+                {
+                    var entity = new UUID4();
+
+                    var point = new ifc2x3.cartesianpoint(entity);
+                    point.cardinality = 3;
+                    point.points.Add(1);
+                    point.points.Add(2);
+                    point.points.Add(33);
+                    point.owner = "bob";
+                    point.external = true;
+                    point.parent = Reference<ifc2x3.cartesianpoint>.From(point);
+
+                    ledger.update(point);
+
+                    var num = await this.ledger.commit("bob@bob.com", "I done did a commit2");
+                }
+            }
+            catch(Exception ex)
+            { 
+                Debug.Write(ex);
+            }
         }
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            publish();
+            this.setup(commandData.Application);
 
             return Result.Succeeded;
         }

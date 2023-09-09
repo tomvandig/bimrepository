@@ -138,6 +138,8 @@ public class ClientLedger {
 
         var commitResponse = CommitResponseT.DeserializeFromBinary(bytes);
 
+        this.modifiedComponents.Clear();
+
         return commitResponse.Id;
     }
 
