@@ -1,0 +1,11 @@
+{
+    "$id": ["ifc2x3", "classification"],
+    "$schemaversion": "1",
+    "$comment": "",
+    "description": "Classification of the IFC element",
+    "shape": {
+        "classification_name": {
+            "type": "string"
+        }
+    }
+}

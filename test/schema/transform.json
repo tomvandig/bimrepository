@@ -1,0 +1,32 @@
+{
+    "$id": ["ifc2x3", "transform"],
+    "$schemaversion": "1",
+    "$comment": "",
+    "description": "Transformation of the IFC element",
+    "shape": {
+        "basis_x": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+        "basis_y": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+        "basis_z": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+        "origin": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        }
+    }
+}

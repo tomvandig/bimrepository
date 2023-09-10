@@ -1,0 +1,20 @@
+{
+    "$id": ["ifc2x3", "geometry"],
+    "$schemaversion": "1",
+    "$comment": "",
+    "description": "Geometry of the IFC element",
+    "shape": {
+        "vertices": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        },
+        "indices": {
+            "type": "array",
+            "items": {
+                "type": "number"
+            }
+        }
+    }
+}
