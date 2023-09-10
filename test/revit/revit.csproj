@@ -88,8 +88,16 @@
     <Compile Include="..\..\lib\schema\bimrepo\uuidv4.cs">
       <Link>lib\uuidv4.cs</Link>
     </Compile>
+    <Compile Include="..\cs\schema_cs\cs\ifc2x3_classification.cs">
+      <Link>schema_cs\cs\ifc2x3_classification.cs</Link>
+    </Compile>
+    <Compile Include="..\cs\schema_cs\cs\ifc2x3_geometry.cs">
+      <Link>schema_cs\cs\ifc2x3_geometry.cs</Link>
+    </Compile>
+    <Compile Include="..\cs\schema_cs\cs\ifc2x3_transform.cs">
+      <Link>schema_cs\cs\ifc2x3_transform.cs</Link>
+    </Compile>
     <Compile Include="plugin.cs" />
-    <Compile Include="schema_cs\cs\ifc2x3_cartesianpoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Google.FlatBuffers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a5f9b243cdbcd871, processorArchitecture=MSIL">

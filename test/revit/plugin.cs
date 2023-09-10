@@ -36,6 +36,73 @@ namespace IFC5
             });
         }
 
+        void GetGeometryComponentForElement(Document doc, Element el)
+        {
+            Options options = new Options();
+            var geom = el.get_Geometry(options);
+
+            foreach (var geompart in geom)
+            {
+                Solid s = geompart as Solid;
+                if (s != null)
+                {
+                    var face = s.Faces.get_Item(0);
+                    var triangulation = face.Triangulate();
+
+                    var material = face.MaterialElementId;
+                    Material M = doc.GetElement(material) as Material;
+
+                    var col = M.Color;
+
+                    var tris = triangulation.NumTriangles;
+
+                    for (int i = 0; i < tris; i++)
+                    {
+                        var tri = triangulation.get_Triangle(i);
+                        var a = tri.get_Vertex(0);
+                    }
+                }
+            }
+        }
+
+        void GetTransformComponentForElement(Document doc, Element el)
+        {
+            var instance = el as Instance;
+
+            if (instance != null)
+            {
+                var transform = instance.GetTransform();
+            }
+        }
+        UUID4 GetElementUUID4(Element el)
+        {
+            var ifcGuid = el.get_Parameter(BuiltInParameter.IFC_GUID).AsString();
+
+            return UUID4.FromIfcGuid(ifcGuid);
+        }
+
+        void ProcessAddedElement(Document doc, Element el)
+        {
+            var entity = GetElementUUID4(el);
+
+            // creating a classification creates the entity
+            var classification = new ifc2x3.classification(entity);
+
+            classification.classification_name = el.Category.BuiltInCategory.ToString();
+
+            ledger.update(classification);
+        }
+
+        void ProcessDeletedElement(Document doc, Element el)
+        {
+
+        }
+
+        void ProcessModifiedElement(Document doc, Element el)
+        {
+
+        }
+
         public async void application_DocumentChanged(object sender, DocumentChangedEventArgs args)
         {
             Debug.WriteLine($"Doc changed");
@@ -43,28 +110,26 @@ namespace IFC5
             {
                 Document doc = args.GetDocument();
 
-
-                var added = args.GetAddedElementIds();
-
-                var modified = args.GetModifiedElementIds();
-
-                var deleted = args.GetDeletedElementIds();
-
-                if (added.Count > 0)
+                foreach (var id in args.GetAddedElementIds())
                 {
-                    var entity = new UUID4();
+                    var el = doc.GetElement(id);
+                    this.ProcessAddedElement(doc, el);
+                }
 
-                    var point = new ifc2x3.cartesianpoint(entity);
-                    point.cardinality = 3;
-                    point.points.Add(1);
-                    point.points.Add(2);
-                    point.points.Add(33);
-                    point.owner = "bob";
-                    point.external = true;
-                    point.parent = Reference<ifc2x3.cartesianpoint>.From(point);
+                foreach (var id in args.GetDeletedElementIds())
+                {
+                    var el = doc.GetElement(id);
+                    this.ProcessDeletedElement(doc, el);
+                }
 
-                    ledger.update(point);
+                foreach (var id in args.GetModifiedElementIds())
+                {
+                    var el = doc.GetElement(id);
+                    this.ProcessModifiedElement(doc, el);
+                }
 
+                if (this.ledger.canCommit())
+                {
                     var num = await this.ledger.commit("bob@bob.com", "I done did a commit2");
                 }
             }
