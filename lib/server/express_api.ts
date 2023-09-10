@@ -7,11 +7,13 @@ import data_api from "./api/data_api";
 
 const wss = new ws.WebSocketServer({ noServer: true });
 const app = express()
-const port = 3000
+const port = 3000;
 
 app.use(express.raw());
 
 let api = new API();
+
+api.AddLedger("ledger");
 
 presentation_api(app, api);
 data_api(app, api);
