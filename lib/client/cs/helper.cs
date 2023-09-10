@@ -24,7 +24,7 @@ public class Helper
         return data;
     }
 
-    public static int GetNumber(ComponentT component)
+    public static double GetNumber(ComponentT component)
     {
         var data = Expect(component, ComponentDataType.Number);
         return data.Num;
@@ -78,7 +78,7 @@ public class Helper
         return p;
     }
 
-    public static ComponentDataT MakeNumber(int num)
+    public static ComponentDataT MakeNumber(double num)
     {
         var p = new ComponentDataT();
         p.Type = ComponentDataType.Number;

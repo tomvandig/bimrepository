@@ -38,6 +38,10 @@ namespace IFC5
 
         void GetGeometryComponentForElement(Document doc, Element el)
         {
+            var entity = GetElementUUID4(el);
+
+            var geometryComponent = new ifc2x3.geometry(entity);
+
             Options options = new Options();
             var geom = el.get_Geometry(options);
 
@@ -46,20 +50,34 @@ namespace IFC5
                 Solid s = geompart as Solid;
                 if (s != null)
                 {
-                    var face = s.Faces.get_Item(0);
-                    var triangulation = face.Triangulate();
-
-                    var material = face.MaterialElementId;
-                    Material M = doc.GetElement(material) as Material;
-
-                    var col = M.Color;
-
-                    var tris = triangulation.NumTriangles;
-
-                    for (int i = 0; i < tris; i++)
+                    for (var i = 0; i < s.Faces.Size; i++)
                     {
-                        var tri = triangulation.get_Triangle(i);
-                        var a = tri.get_Vertex(0);
+                        var face = s.Faces.get_Item(i);
+
+                        var triangulation = face.Triangulate();
+
+                        foreach (var vert in triangulation.Vertices)
+                        {
+                            geometryComponent.vertices.Add(vert.X);
+                            geometryComponent.vertices.Add(vert.Y);
+                            geometryComponent.vertices.Add(vert.Z);
+                        }
+
+                        if (false)
+                        {
+                            var material = face.MaterialElementId;
+                            Material M = doc.GetElement(material) as Material;
+
+                            var col = M.Color;
+                        }
+
+                        for (int j = 0; j < triangulation.NumTriangles; j++)
+                        {
+                            var tri = triangulation.get_Triangle(j);
+                            geometryComponent.indices.Add(tri.get_Index(0));
+                            geometryComponent.indices.Add(tri.get_Index(1));
+                            geometryComponent.indices.Add(tri.get_Index(2));
+                        }
                     }
                 }
             }
@@ -95,7 +113,19 @@ namespace IFC5
 
         void ProcessDeletedElement(Document doc, Element el)
         {
+            return;
 
+            // we can't actually do this since the element is already deleted
+            // should find some "before delete" event
+
+            var entity = GetElementUUID4(el);
+
+            // setting classification to "deleted" deletes entity
+            var classification = new ifc2x3.classification(entity);
+
+            classification.classification_name = "deleted";
+
+            ledger.update(classification);
         }
 
         void ProcessModifiedElement(Document doc, Element el)

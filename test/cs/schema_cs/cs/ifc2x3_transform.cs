@@ -48,10 +48,10 @@ namespace ifc2x3 {
         }
         
         // properties
-        public List<int> basis_x = new List<int>();
-            public List<int> basis_y = new List<int>();
-                public List<int> basis_z = new List<int>();
-                    public List<int> origin = new List<int>();
+        public List<double> basis_x = new List<double>();
+            public List<double> basis_y = new List<double>();
+                public List<double> basis_z = new List<double>();
+                    public List<double> origin = new List<double>();
                         // end properties
                         
                         // methods

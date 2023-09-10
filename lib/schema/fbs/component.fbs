@@ -20,7 +20,7 @@ table ComponentData
 {
     type: ComponentDataType = Number;
     array_length: int32;
-    num: int32;
+    num: float64;
     str: string;
     boolean: bool;
     ref: ComponentIdentifier;

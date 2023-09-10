@@ -36,7 +36,7 @@ arrayLength():number {
 
 num():number {
   const offset = this.bb!.__offset(this.bb_pos, 8);
-  return offset ? this.bb!.readInt32(this.bb_pos + offset) : 0;
+  return offset ? this.bb!.readFloat64(this.bb_pos + offset) : 0.0;
 }
 
 str():string|null
@@ -69,7 +69,7 @@ static addArrayLength(builder:flatbuffers.Builder, arrayLength:number) {
 }
 
 static addNum(builder:flatbuffers.Builder, num:number) {
-  builder.addFieldInt32(2, num, 0);
+  builder.addFieldFloat64(2, num, 0.0);
 }
 
 static addStr(builder:flatbuffers.Builder, strOffset:flatbuffers.Offset) {
@@ -116,7 +116,7 @@ export class ComponentDataT implements flatbuffers.IGeneratedObject {
 constructor(
   public type: ComponentDataType = ComponentDataType.Number,
   public arrayLength: number = 0,
-  public num: number = 0,
+  public num: number = 0.0,
   public str: string|Uint8Array|null = null,
   public boolean: boolean = false,
   public ref: ComponentIdentifierT|null = null

@@ -36,8 +36,8 @@ namespace ifc2x3 {
         }
         
         // properties
-        public List<int> vertices = new List<int>();
-            public List<int> indices = new List<int>();
+        public List<double> vertices = new List<double>();
+            public List<double> indices = new List<double>();
                 // end properties
                 
                 // methods

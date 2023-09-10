@@ -48,8 +48,8 @@ namespace ifc2x3 {
         }
         
         // properties
-        public List<int> points = new List<int>();
-            public int cardinality = 0;
+        public List<double> points = new List<double>();
+            public double cardinality = 0;
             public string owner = "";
             public bool external = false;
             public Reference<ifc2x3.cartesianpoint> parent = null;
