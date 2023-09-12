@@ -19,43 +19,95 @@ public struct ComponentData : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public ComponentData __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public bimrepo.ComponentDataType Type { get { int o = __p.__offset(4); return o != 0 ? (bimrepo.ComponentDataType)__p.bb.GetSbyte(o + __p.bb_pos) : bimrepo.ComponentDataType.Number; } }
+  public bimrepo.ComponentDataType Type { get { int o = __p.__offset(4); return o != 0 ? (bimrepo.ComponentDataType)__p.bb.GetSbyte(o + __p.bb_pos) : bimrepo.ComponentDataType.Int32; } }
   public int ArrayLength { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
-  public double Num { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
-  public string Str { get { int o = __p.__offset(10); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+  public byte Blob(int j) { int o = __p.__offset(8); return o != 0 ? __p.bb.Get(__p.__vector(o) + j * 1) : (byte)0; }
+  public int BlobLength { get { int o = __p.__offset(8); return o != 0 ? __p.__vector_len(o) : 0; } }
 #if ENABLE_SPAN_T
-  public Span<byte> GetStrBytes() { return __p.__vector_as_span<byte>(10, 1); }
+  public Span<byte> GetBlobBytes() { return __p.__vector_as_span<byte>(8, 1); }
 #else
-  public ArraySegment<byte>? GetStrBytes() { return __p.__vector_as_arraysegment(10); }
+  public ArraySegment<byte>? GetBlobBytes() { return __p.__vector_as_arraysegment(8); }
 #endif
-  public byte[] GetStrArray() { return __p.__vector_as_array<byte>(10); }
-  public bool Boolean { get { int o = __p.__offset(12); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
-  public bimrepo.ComponentIdentifier? Ref { get { int o = __p.__offset(14); return o != 0 ? (bimrepo.ComponentIdentifier?)(new bimrepo.ComponentIdentifier()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+  public byte[] GetBlobArray() { return __p.__vector_as_array<byte>(8); }
+  public byte Uint8 { get { int o = __p.__offset(10); return o != 0 ? __p.bb.Get(o + __p.bb_pos) : (byte)0; } }
+  public ushort Uint16 { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetUshort(o + __p.bb_pos) : (ushort)0; } }
+  public uint Uint32 { get { int o = __p.__offset(14); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
+  public ulong Uint64 { get { int o = __p.__offset(16); return o != 0 ? __p.bb.GetUlong(o + __p.bb_pos) : (ulong)0; } }
+  public sbyte Int8 { get { int o = __p.__offset(18); return o != 0 ? __p.bb.GetSbyte(o + __p.bb_pos) : (sbyte)0; } }
+  public short Int16 { get { int o = __p.__offset(20); return o != 0 ? __p.bb.GetShort(o + __p.bb_pos) : (short)0; } }
+  public int Int32 { get { int o = __p.__offset(22); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public long Int64 { get { int o = __p.__offset(24); return o != 0 ? __p.bb.GetLong(o + __p.bb_pos) : (long)0; } }
+  public float Float32 { get { int o = __p.__offset(26); return o != 0 ? __p.bb.GetFloat(o + __p.bb_pos) : (float)0.0f; } }
+  public double Float64 { get { int o = __p.__offset(28); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
+  public string Str { get { int o = __p.__offset(30); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetStrBytes() { return __p.__vector_as_span<byte>(30, 1); }
+#else
+  public ArraySegment<byte>? GetStrBytes() { return __p.__vector_as_arraysegment(30); }
+#endif
+  public byte[] GetStrArray() { return __p.__vector_as_array<byte>(30); }
+  public bool Boolean { get { int o = __p.__offset(32); return o != 0 ? 0!=__p.bb.Get(o + __p.bb_pos) : (bool)false; } }
+  public bimrepo.ComponentIdentifier? Ref { get { int o = __p.__offset(34); return o != 0 ? (bimrepo.ComponentIdentifier?)(new bimrepo.ComponentIdentifier()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
 
   public static Offset<bimrepo.ComponentData> CreateComponentData(FlatBufferBuilder builder,
-      bimrepo.ComponentDataType type = bimrepo.ComponentDataType.Number,
+      bimrepo.ComponentDataType type = bimrepo.ComponentDataType.Int32,
       int array_length = 0,
-      double num = 0.0,
+      VectorOffset blobOffset = default(VectorOffset),
+      byte uint8 = 0,
+      ushort uint16 = 0,
+      uint uint32 = 0,
+      ulong uint64 = 0,
+      sbyte int8 = 0,
+      short int16 = 0,
+      int int32 = 0,
+      long int64 = 0,
+      float float32 = 0.0f,
+      double float64 = 0.0,
       StringOffset strOffset = default(StringOffset),
       bool boolean = false,
       Offset<bimrepo.ComponentIdentifier> @refOffset = default(Offset<bimrepo.ComponentIdentifier>)) {
-    builder.StartTable(6);
-    ComponentData.AddNum(builder, num);
+    builder.StartTable(16);
+    ComponentData.AddFloat64(builder, float64);
+    ComponentData.AddInt64(builder, int64);
+    ComponentData.AddUint64(builder, uint64);
     ComponentData.AddRef(builder, @refOffset);
     ComponentData.AddStr(builder, strOffset);
+    ComponentData.AddFloat32(builder, float32);
+    ComponentData.AddInt32(builder, int32);
+    ComponentData.AddUint32(builder, uint32);
+    ComponentData.AddBlob(builder, blobOffset);
     ComponentData.AddArrayLength(builder, array_length);
+    ComponentData.AddInt16(builder, int16);
+    ComponentData.AddUint16(builder, uint16);
     ComponentData.AddBoolean(builder, boolean);
+    ComponentData.AddInt8(builder, int8);
+    ComponentData.AddUint8(builder, uint8);
     ComponentData.AddType(builder, type);
     return ComponentData.EndComponentData(builder);
   }
 
-  public static void StartComponentData(FlatBufferBuilder builder) { builder.StartTable(6); }
-  public static void AddType(FlatBufferBuilder builder, bimrepo.ComponentDataType type) { builder.AddSbyte(0, (sbyte)type, 1); }
+  public static void StartComponentData(FlatBufferBuilder builder) { builder.StartTable(16); }
+  public static void AddType(FlatBufferBuilder builder, bimrepo.ComponentDataType type) { builder.AddSbyte(0, (sbyte)type, 3); }
   public static void AddArrayLength(FlatBufferBuilder builder, int arrayLength) { builder.AddInt(1, arrayLength, 0); }
-  public static void AddNum(FlatBufferBuilder builder, double num) { builder.AddDouble(2, num, 0.0); }
-  public static void AddStr(FlatBufferBuilder builder, StringOffset strOffset) { builder.AddOffset(3, strOffset.Value, 0); }
-  public static void AddBoolean(FlatBufferBuilder builder, bool boolean) { builder.AddBool(4, boolean, false); }
-  public static void AddRef(FlatBufferBuilder builder, Offset<bimrepo.ComponentIdentifier> refOffset) { builder.AddOffset(5, refOffset.Value, 0); }
+  public static void AddBlob(FlatBufferBuilder builder, VectorOffset blobOffset) { builder.AddOffset(2, blobOffset.Value, 0); }
+  public static VectorOffset CreateBlobVector(FlatBufferBuilder builder, byte[] data) { builder.StartVector(1, data.Length, 1); for (int i = data.Length - 1; i >= 0; i--) builder.AddByte(data[i]); return builder.EndVector(); }
+  public static VectorOffset CreateBlobVectorBlock(FlatBufferBuilder builder, byte[] data) { builder.StartVector(1, data.Length, 1); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateBlobVectorBlock(FlatBufferBuilder builder, ArraySegment<byte> data) { builder.StartVector(1, data.Count, 1); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateBlobVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<byte>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartBlobVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(1, numElems, 1); }
+  public static void AddUint8(FlatBufferBuilder builder, byte uint8) { builder.AddByte(3, uint8, 0); }
+  public static void AddUint16(FlatBufferBuilder builder, ushort uint16) { builder.AddUshort(4, uint16, 0); }
+  public static void AddUint32(FlatBufferBuilder builder, uint uint32) { builder.AddUint(5, uint32, 0); }
+  public static void AddUint64(FlatBufferBuilder builder, ulong uint64) { builder.AddUlong(6, uint64, 0); }
+  public static void AddInt8(FlatBufferBuilder builder, sbyte int8) { builder.AddSbyte(7, int8, 0); }
+  public static void AddInt16(FlatBufferBuilder builder, short int16) { builder.AddShort(8, int16, 0); }
+  public static void AddInt32(FlatBufferBuilder builder, int int32) { builder.AddInt(9, int32, 0); }
+  public static void AddInt64(FlatBufferBuilder builder, long int64) { builder.AddLong(10, int64, 0); }
+  public static void AddFloat32(FlatBufferBuilder builder, float float32) { builder.AddFloat(11, float32, 0.0f); }
+  public static void AddFloat64(FlatBufferBuilder builder, double float64) { builder.AddDouble(12, float64, 0.0); }
+  public static void AddStr(FlatBufferBuilder builder, StringOffset strOffset) { builder.AddOffset(13, strOffset.Value, 0); }
+  public static void AddBoolean(FlatBufferBuilder builder, bool boolean) { builder.AddBool(14, boolean, false); }
+  public static void AddRef(FlatBufferBuilder builder, Offset<bimrepo.ComponentIdentifier> refOffset) { builder.AddOffset(15, refOffset.Value, 0); }
   public static Offset<bimrepo.ComponentData> EndComponentData(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<bimrepo.ComponentData>(o);
@@ -68,20 +120,46 @@ public struct ComponentData : IFlatbufferObject
   public void UnPackTo(ComponentDataT _o) {
     _o.Type = this.Type;
     _o.ArrayLength = this.ArrayLength;
-    _o.Num = this.Num;
+    _o.Blob = new List<byte>();
+    for (var _j = 0; _j < this.BlobLength; ++_j) {_o.Blob.Add(this.Blob(_j));}
+    _o.Uint8 = this.Uint8;
+    _o.Uint16 = this.Uint16;
+    _o.Uint32 = this.Uint32;
+    _o.Uint64 = this.Uint64;
+    _o.Int8 = this.Int8;
+    _o.Int16 = this.Int16;
+    _o.Int32 = this.Int32;
+    _o.Int64 = this.Int64;
+    _o.Float32 = this.Float32;
+    _o.Float64 = this.Float64;
     _o.Str = this.Str;
     _o.Boolean = this.Boolean;
     _o.Ref = this.Ref.HasValue ? this.Ref.Value.UnPack() : null;
   }
   public static Offset<bimrepo.ComponentData> Pack(FlatBufferBuilder builder, ComponentDataT _o) {
     if (_o == null) return default(Offset<bimrepo.ComponentData>);
+    var _blob = default(VectorOffset);
+    if (_o.Blob != null) {
+      var __blob = _o.Blob.ToArray();
+      _blob = CreateBlobVector(builder, __blob);
+    }
     var _str = _o.Str == null ? default(StringOffset) : builder.CreateString(_o.Str);
     var _ref = _o.Ref == null ? default(Offset<bimrepo.ComponentIdentifier>) : bimrepo.ComponentIdentifier.Pack(builder, _o.Ref);
     return CreateComponentData(
       builder,
       _o.Type,
       _o.ArrayLength,
-      _o.Num,
+      _blob,
+      _o.Uint8,
+      _o.Uint16,
+      _o.Uint32,
+      _o.Uint64,
+      _o.Int8,
+      _o.Int16,
+      _o.Int32,
+      _o.Int64,
+      _o.Float32,
+      _o.Float64,
       _str,
       _o.Boolean,
       _ref);
@@ -92,15 +170,35 @@ public class ComponentDataT
 {
   public bimrepo.ComponentDataType Type { get; set; }
   public int ArrayLength { get; set; }
-  public double Num { get; set; }
+  public List<byte> Blob { get; set; }
+  public byte Uint8 { get; set; }
+  public ushort Uint16 { get; set; }
+  public uint Uint32 { get; set; }
+  public ulong Uint64 { get; set; }
+  public sbyte Int8 { get; set; }
+  public short Int16 { get; set; }
+  public int Int32 { get; set; }
+  public long Int64 { get; set; }
+  public float Float32 { get; set; }
+  public double Float64 { get; set; }
   public string Str { get; set; }
   public bool Boolean { get; set; }
   public bimrepo.ComponentIdentifierT Ref { get; set; }
 
   public ComponentDataT() {
-    this.Type = bimrepo.ComponentDataType.Number;
+    this.Type = bimrepo.ComponentDataType.Int32;
     this.ArrayLength = 0;
-    this.Num = 0.0;
+    this.Blob = null;
+    this.Uint8 = 0;
+    this.Uint16 = 0;
+    this.Uint32 = 0;
+    this.Uint64 = 0;
+    this.Int8 = 0;
+    this.Int16 = 0;
+    this.Int32 = 0;
+    this.Int64 = 0;
+    this.Float32 = 0.0f;
+    this.Float64 = 0.0;
     this.Str = null;
     this.Boolean = false;
     this.Ref = null;
@@ -115,10 +213,20 @@ static public class ComponentDataVerify
     return verifier.VerifyTableStart(tablePos)
       && verifier.VerifyField(tablePos, 4 /*Type*/, 1 /*bimrepo.ComponentDataType*/, 1, false)
       && verifier.VerifyField(tablePos, 6 /*ArrayLength*/, 4 /*int*/, 4, false)
-      && verifier.VerifyField(tablePos, 8 /*Num*/, 8 /*double*/, 8, false)
-      && verifier.VerifyString(tablePos, 10 /*Str*/, false)
-      && verifier.VerifyField(tablePos, 12 /*Boolean*/, 1 /*bool*/, 1, false)
-      && verifier.VerifyTable(tablePos, 14 /*Ref*/, bimrepo.ComponentIdentifierVerify.Verify, false)
+      && verifier.VerifyVectorOfData(tablePos, 8 /*Blob*/, 1 /*byte*/, false)
+      && verifier.VerifyField(tablePos, 10 /*Uint8*/, 1 /*byte*/, 1, false)
+      && verifier.VerifyField(tablePos, 12 /*Uint16*/, 2 /*ushort*/, 2, false)
+      && verifier.VerifyField(tablePos, 14 /*Uint32*/, 4 /*uint*/, 4, false)
+      && verifier.VerifyField(tablePos, 16 /*Uint64*/, 8 /*ulong*/, 8, false)
+      && verifier.VerifyField(tablePos, 18 /*Int8*/, 1 /*sbyte*/, 1, false)
+      && verifier.VerifyField(tablePos, 20 /*Int16*/, 2 /*short*/, 2, false)
+      && verifier.VerifyField(tablePos, 22 /*Int32*/, 4 /*int*/, 4, false)
+      && verifier.VerifyField(tablePos, 24 /*Int64*/, 8 /*long*/, 8, false)
+      && verifier.VerifyField(tablePos, 26 /*Float32*/, 4 /*float*/, 4, false)
+      && verifier.VerifyField(tablePos, 28 /*Float64*/, 8 /*double*/, 8, false)
+      && verifier.VerifyString(tablePos, 30 /*Str*/, false)
+      && verifier.VerifyField(tablePos, 32 /*Boolean*/, 1 /*bool*/, 1, false)
+      && verifier.VerifyTable(tablePos, 34 /*Ref*/, bimrepo.ComponentIdentifierVerify.Verify, false)
       && verifier.VerifyTableEnd(tablePos);
   }
 }

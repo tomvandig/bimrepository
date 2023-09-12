@@ -7,11 +7,11 @@
         "points": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "float32"
             }
         },
         "cardinality": {
-            "type": "number"
+            "type": "int32"
         },
         "owner": {
             "type": "string"

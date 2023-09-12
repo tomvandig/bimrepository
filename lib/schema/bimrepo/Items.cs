@@ -19,10 +19,10 @@ public struct Items : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
   public Items __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public bimrepo.PropertyType Type { get { int o = __p.__offset(4); return o != 0 ? (bimrepo.PropertyType)__p.bb.GetSbyte(o + __p.bb_pos) : bimrepo.PropertyType.Number; } }
+  public bimrepo.PropertyType Type { get { int o = __p.__offset(4); return o != 0 ? (bimrepo.PropertyType)__p.bb.GetSbyte(o + __p.bb_pos) : bimrepo.PropertyType.Int8; } }
 
   public static Offset<bimrepo.Items> CreateItems(FlatBufferBuilder builder,
-      bimrepo.PropertyType type = bimrepo.PropertyType.Number) {
+      bimrepo.PropertyType type = bimrepo.PropertyType.Int8) {
     builder.StartTable(1);
     Items.AddType(builder, type);
     return Items.EndItems(builder);
@@ -55,7 +55,7 @@ public class ItemsT
   public bimrepo.PropertyType Type { get; set; }
 
   public ItemsT() {
-    this.Type = bimrepo.PropertyType.Number;
+    this.Type = bimrepo.PropertyType.Int8;
   }
 }
 

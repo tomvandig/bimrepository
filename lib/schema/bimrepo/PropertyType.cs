@@ -7,11 +7,21 @@ namespace bimrepo
 
 public enum PropertyType : sbyte
 {
-  Number = 1,
-  Array = 2,
-  String = 3,
-  Boolean = 4,
-  Ref = 5,
+  Int8 = 1,
+  Int16 = 2,
+  Int32 = 3,
+  Int64 = 4,
+  Uint8 = 5,
+  Uint16 = 6,
+  Uint32 = 7,
+  Uint64 = 8,
+  Float32 = 9,
+  Float64 = 10,
+  Blob = 11,
+  Array = 12,
+  String = 13,
+  Boolean = 14,
+  Ref = 15,
 };
 
 

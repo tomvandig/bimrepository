@@ -58,9 +58,9 @@ namespace IFC5
 
                         foreach (var vert in triangulation.Vertices)
                         {
-                            geometryComponent.vertices.Add(vert.X);
-                            geometryComponent.vertices.Add(vert.Y);
-                            geometryComponent.vertices.Add(vert.Z);
+                            geometryComponent.vertices.Add((float)vert.X);
+                            geometryComponent.vertices.Add((float)vert.Y);
+                            geometryComponent.vertices.Add((float)vert.Z);
                         }
 
                         if (false)
@@ -74,9 +74,9 @@ namespace IFC5
                         for (int j = 0; j < triangulation.NumTriangles; j++)
                         {
                             var tri = triangulation.get_Triangle(j);
-                            geometryComponent.indices.Add(tri.get_Index(0));
-                            geometryComponent.indices.Add(tri.get_Index(1));
-                            geometryComponent.indices.Add(tri.get_Index(2));
+                            geometryComponent.indices.Add((int)tri.get_Index(0));
+                            geometryComponent.indices.Add((int)tri.get_Index(1));
+                            geometryComponent.indices.Add((int)tri.get_Index(2));
                         }
                     }
                 }

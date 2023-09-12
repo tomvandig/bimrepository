@@ -12,25 +12,25 @@
         "basis_x": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "float32"
             }
         },
         "basis_y": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "float32"
             }
         },
         "basis_z": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "float32"
             }
         },
         "origin": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "float32"
             }
         }
     }
@@ -43,15 +43,15 @@ using System.Collections.Generic;
 namespace ifc2x3 {
     public class transform : ECSComponent {
         
-        public transform(UUID4 id) : base("ifc2x3_transform", "620c84ae15554de6cd7a3324dca9fd4b35ba85b8a22d0c86900197c377171185", id) {
+        public transform(UUID4 id) : base("ifc2x3_transform", "7867ba20c25ddfb9da771a03ba8a8de00b95f6d2dce266c00224af5b0339ecbc", id) {
             
         }
         
         // properties
-        public List<double> basis_x = new List<double>();
-            public List<double> basis_y = new List<double>();
-                public List<double> basis_z = new List<double>();
-                    public List<double> origin = new List<double>();
+        public List<float> basis_x = new List<float>();
+            public List<float> basis_y = new List<float>();
+                public List<float> basis_z = new List<float>();
+                    public List<float> origin = new List<float>();
                         // end properties
                         
                         // methods
@@ -69,25 +69,25 @@ namespace ifc2x3 {
                                 // property basis_x
                                 componentObj.Data.Add(Helper.MakeArrayStart(this.basis_x.Count));
                                 this.basis_x.ForEach((item) => {
-                                    componentObj.Data.Add(Helper.MakeNumber(item));
+                                    componentObj.Data.Add(Helper.MakeFloat32(item));
                                 });
                                 componentObj.Data.Add(Helper.MakeArrayEnd());
                                 // property basis_y
                                 componentObj.Data.Add(Helper.MakeArrayStart(this.basis_y.Count));
                                 this.basis_y.ForEach((item) => {
-                                    componentObj.Data.Add(Helper.MakeNumber(item));
+                                    componentObj.Data.Add(Helper.MakeFloat32(item));
                                 });
                                 componentObj.Data.Add(Helper.MakeArrayEnd());
                                 // property basis_z
                                 componentObj.Data.Add(Helper.MakeArrayStart(this.basis_z.Count));
                                 this.basis_z.ForEach((item) => {
-                                    componentObj.Data.Add(Helper.MakeNumber(item));
+                                    componentObj.Data.Add(Helper.MakeFloat32(item));
                                 });
                                 componentObj.Data.Add(Helper.MakeArrayEnd());
                                 // property origin
                                 componentObj.Data.Add(Helper.MakeArrayStart(this.origin.Count));
                                 this.origin.ForEach((item) => {
-                                    componentObj.Data.Add(Helper.MakeNumber(item));
+                                    componentObj.Data.Add(Helper.MakeFloat32(item));
                                 });
                                 componentObj.Data.Add(Helper.MakeArrayEnd());
                                 
@@ -117,7 +117,7 @@ namespace ifc2x3 {
                                                 prop_basis_x.Type = PropertyType.Array;
                                                 
                                                 prop_basis_x.Items = new ItemsT();
-                                                prop_basis_x.Items.Type = PropertyType.Number;
+                                                prop_basis_x.Items.Type = PropertyType.Float32;
                                                 
                                                 
                                                 schemaObj.SchemaShape.Properties.Add(prop_basis_x);
@@ -132,7 +132,7 @@ namespace ifc2x3 {
                                                 prop_basis_y.Type = PropertyType.Array;
                                                 
                                                 prop_basis_y.Items = new ItemsT();
-                                                prop_basis_y.Items.Type = PropertyType.Number;
+                                                prop_basis_y.Items.Type = PropertyType.Float32;
                                                 
                                                 
                                                 schemaObj.SchemaShape.Properties.Add(prop_basis_y);
@@ -147,7 +147,7 @@ namespace ifc2x3 {
                                                 prop_basis_z.Type = PropertyType.Array;
                                                 
                                                 prop_basis_z.Items = new ItemsT();
-                                                prop_basis_z.Items.Type = PropertyType.Number;
+                                                prop_basis_z.Items.Type = PropertyType.Float32;
                                                 
                                                 
                                                 schemaObj.SchemaShape.Properties.Add(prop_basis_z);
@@ -162,7 +162,7 @@ namespace ifc2x3 {
                                                 prop_origin.Type = PropertyType.Array;
                                                 
                                                 prop_origin.Items = new ItemsT();
-                                                prop_origin.Items.Type = PropertyType.Number;
+                                                prop_origin.Items.Type = PropertyType.Float32;
                                                 
                                                 
                                                 schemaObj.SchemaShape.Properties.Add(prop_origin);
@@ -190,7 +190,7 @@ namespace ifc2x3 {
                                                     var count = Helper.GetArrayStart(componentObj);
                                                     for (var i = 0; i < count; i++)
                                                     {
-                                                        obj.basis_x.Add(Helper.GetNumber(componentObj));
+                                                        obj.basis_x.Add(Helper.GetFloat32(componentObj));
                                                     }
                                                     Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                                                     
@@ -203,7 +203,7 @@ namespace ifc2x3 {
                                                     var count = Helper.GetArrayStart(componentObj);
                                                     for (var i = 0; i < count; i++)
                                                     {
-                                                        obj.basis_y.Add(Helper.GetNumber(componentObj));
+                                                        obj.basis_y.Add(Helper.GetFloat32(componentObj));
                                                     }
                                                     Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                                                     
@@ -216,7 +216,7 @@ namespace ifc2x3 {
                                                     var count = Helper.GetArrayStart(componentObj);
                                                     for (var i = 0; i < count; i++)
                                                     {
-                                                        obj.basis_z.Add(Helper.GetNumber(componentObj));
+                                                        obj.basis_z.Add(Helper.GetFloat32(componentObj));
                                                     }
                                                     Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                                                     
@@ -229,7 +229,7 @@ namespace ifc2x3 {
                                                     var count = Helper.GetArrayStart(componentObj);
                                                     for (var i = 0; i < count; i++)
                                                     {
-                                                        obj.origin.Add(Helper.GetNumber(componentObj));
+                                                        obj.origin.Add(Helper.GetFloat32(componentObj));
                                                     }
                                                     Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                                                     

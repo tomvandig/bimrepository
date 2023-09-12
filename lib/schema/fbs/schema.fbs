@@ -1,15 +1,31 @@
 
 namespace bimrepo;
 
-enum PropertyType : byte { Number = 1, Array, String, Boolean, Ref }
+enum PropertyType : byte { 
+    Int8 = 1,
+    Int16, 
+    Int32, 
+    Int64,
+    Uint8,
+    Uint16, 
+    Uint32, 
+    Uint64,
+    Float32,
+    Float64,
+    Blob,
+    Array, 
+    String, 
+    Boolean, 
+    Ref
+}
 
 table Items {
-    type: PropertyType = Number;
+    type: PropertyType = Int8;
 }
 
 table property {
     name: string;
-    type: PropertyType = Number;
+    type: PropertyType = Int8;
     items: Items;
 }
 

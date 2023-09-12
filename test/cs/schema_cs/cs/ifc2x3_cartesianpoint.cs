@@ -12,11 +12,11 @@
         "points": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "float32"
             }
         },
         "cardinality": {
-            "type": "number"
+            "type": "int32"
         },
         "owner": {
             "type": "string"
@@ -43,13 +43,13 @@ namespace ifc2x3 {
     // TODO: fix
     public class cartesianpoint : ECSComponent {
         
-        public cartesianpoint(UUID4 id) : base("ifc2x3_cartesianpoint", "8d7331108c75b5a83eba9590fd9cf25dd4a50848ea9ade10023db7a2b6f2189a", id) {
+        public cartesianpoint(UUID4 id) : base("ifc2x3_cartesianpoint", "f3a68bb87904b6ec489d1cfd18f3a434900d87e92904b8af1bfffe0b7664f611", id) {
             
         }
         
         // properties
-        public List<double> points = new List<double>();
-            public double cardinality = 0;
+        public List<float> points = new List<float>();
+            public int cardinality = 0;
             public string owner = "";
             public bool external = false;
             public Reference<ifc2x3.cartesianpoint> parent = null;
@@ -70,11 +70,11 @@ namespace ifc2x3 {
                         // property points
                         componentObj.Data.Add(Helper.MakeArrayStart(this.points.Count));
                         this.points.ForEach((item) => {
-                            componentObj.Data.Add(Helper.MakeNumber(item));
+                            componentObj.Data.Add(Helper.MakeFloat32(item));
                         });
                         componentObj.Data.Add(Helper.MakeArrayEnd());
                         // property cardinality
-                        componentObj.Data.Add(Helper.MakeNumber(this.cardinality));
+                        componentObj.Data.Add(Helper.MakeInt32(this.cardinality));
                         // property owner
                         componentObj.Data.Add(Helper.MakeString(this.owner));
                         // property external
@@ -108,7 +108,7 @@ namespace ifc2x3 {
                                         prop_points.Type = PropertyType.Array;
                                         
                                         prop_points.Items = new ItemsT();
-                                        prop_points.Items.Type = PropertyType.Number;
+                                        prop_points.Items.Type = PropertyType.Float32;
                                         
                                         
                                         schemaObj.SchemaShape.Properties.Add(prop_points);
@@ -120,7 +120,7 @@ namespace ifc2x3 {
                                         var prop_cardinality = new propertyT();
                                         
                                         prop_cardinality.Name = "cardinality";
-                                        prop_cardinality.Type = PropertyType.Number;
+                                        prop_cardinality.Type = PropertyType.Int32;
                                         
                                         
                                         schemaObj.SchemaShape.Properties.Add(prop_cardinality);
@@ -184,7 +184,7 @@ namespace ifc2x3 {
                                             var count = Helper.GetArrayStart(componentObj);
                                             for (var i = 0; i < count; i++)
                                             {
-                                                obj.points.Add(Helper.GetNumber(componentObj));
+                                                obj.points.Add(Helper.GetFloat32(componentObj));
                                             }
                                             Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                                             
@@ -194,7 +194,7 @@ namespace ifc2x3 {
                                         // property cardinality
                                         {
                                             
-                                            obj.cardinality = Helper.GetNumber(componentObj);
+                                            obj.cardinality = Helper.GetInt32(componentObj);
                                             
                                         }
                                         

@@ -12,13 +12,13 @@
         "vertices": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "float32"
             }
         },
         "indices": {
             "type": "array",
             "items": {
-                "type": "number"
+                "type": "int32"
             }
         }
     }
@@ -31,13 +31,13 @@ using System.Collections.Generic;
 namespace ifc2x3 {
     public class geometry : ECSComponent {
         
-        public geometry(UUID4 id) : base("ifc2x3_geometry", "97581cbd6d16c746247bdceb638424c10e3bc53015ffcdc57fe58c6e3c6f7564", id) {
+        public geometry(UUID4 id) : base("ifc2x3_geometry", "fec4de4b95647dfd11de476d88d556324318f83a0b0c865c3399080f7595934d", id) {
             
         }
         
         // properties
-        public List<double> vertices = new List<double>();
-            public List<double> indices = new List<double>();
+        public List<float> vertices = new List<float>();
+            public List<int> indices = new List<int>();
                 // end properties
                 
                 // methods
@@ -55,13 +55,13 @@ namespace ifc2x3 {
                         // property vertices
                         componentObj.Data.Add(Helper.MakeArrayStart(this.vertices.Count));
                         this.vertices.ForEach((item) => {
-                            componentObj.Data.Add(Helper.MakeNumber(item));
+                            componentObj.Data.Add(Helper.MakeFloat32(item));
                         });
                         componentObj.Data.Add(Helper.MakeArrayEnd());
                         // property indices
                         componentObj.Data.Add(Helper.MakeArrayStart(this.indices.Count));
                         this.indices.ForEach((item) => {
-                            componentObj.Data.Add(Helper.MakeNumber(item));
+                            componentObj.Data.Add(Helper.MakeInt32(item));
                         });
                         componentObj.Data.Add(Helper.MakeArrayEnd());
                         
@@ -91,7 +91,7 @@ namespace ifc2x3 {
                                         prop_vertices.Type = PropertyType.Array;
                                         
                                         prop_vertices.Items = new ItemsT();
-                                        prop_vertices.Items.Type = PropertyType.Number;
+                                        prop_vertices.Items.Type = PropertyType.Float32;
                                         
                                         
                                         schemaObj.SchemaShape.Properties.Add(prop_vertices);
@@ -106,7 +106,7 @@ namespace ifc2x3 {
                                         prop_indices.Type = PropertyType.Array;
                                         
                                         prop_indices.Items = new ItemsT();
-                                        prop_indices.Items.Type = PropertyType.Number;
+                                        prop_indices.Items.Type = PropertyType.Int32;
                                         
                                         
                                         schemaObj.SchemaShape.Properties.Add(prop_indices);
@@ -134,7 +134,7 @@ namespace ifc2x3 {
                                             var count = Helper.GetArrayStart(componentObj);
                                             for (var i = 0; i < count; i++)
                                             {
-                                                obj.vertices.Add(Helper.GetNumber(componentObj));
+                                                obj.vertices.Add(Helper.GetFloat32(componentObj));
                                             }
                                             Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                                             
@@ -147,7 +147,7 @@ namespace ifc2x3 {
                                             var count = Helper.GetArrayStart(componentObj);
                                             for (var i = 0; i < count; i++)
                                             {
-                                                obj.indices.Add(Helper.GetNumber(componentObj));
+                                                obj.indices.Add(Helper.GetInt32(componentObj));
                                             }
                                             Helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                                             

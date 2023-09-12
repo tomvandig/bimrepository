@@ -26,12 +26,12 @@ public struct property : IFlatbufferObject
   public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(4); }
 #endif
   public byte[] GetNameArray() { return __p.__vector_as_array<byte>(4); }
-  public bimrepo.PropertyType Type { get { int o = __p.__offset(6); return o != 0 ? (bimrepo.PropertyType)__p.bb.GetSbyte(o + __p.bb_pos) : bimrepo.PropertyType.Number; } }
+  public bimrepo.PropertyType Type { get { int o = __p.__offset(6); return o != 0 ? (bimrepo.PropertyType)__p.bb.GetSbyte(o + __p.bb_pos) : bimrepo.PropertyType.Int8; } }
   public bimrepo.Items? Items { get { int o = __p.__offset(8); return o != 0 ? (bimrepo.Items?)(new bimrepo.Items()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
 
   public static Offset<bimrepo.property> Createproperty(FlatBufferBuilder builder,
       StringOffset nameOffset = default(StringOffset),
-      bimrepo.PropertyType type = bimrepo.PropertyType.Number,
+      bimrepo.PropertyType type = bimrepo.PropertyType.Int8,
       Offset<bimrepo.Items> itemsOffset = default(Offset<bimrepo.Items>)) {
     builder.StartTable(3);
     property.AddItems(builder, itemsOffset);
@@ -78,7 +78,7 @@ public class propertyT
 
   public propertyT() {
     this.Name = null;
-    this.Type = bimrepo.PropertyType.Number;
+    this.Type = bimrepo.PropertyType.Int8;
     this.Items = null;
   }
 }

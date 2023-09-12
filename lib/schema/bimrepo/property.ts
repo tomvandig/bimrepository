@@ -33,7 +33,7 @@ name(optionalEncoding?:any):string|Uint8Array|null {
 
 type():PropertyType {
   const offset = this.bb!.__offset(this.bb_pos, 6);
-  return offset ? this.bb!.readInt8(this.bb_pos + offset) : PropertyType.Number;
+  return offset ? this.bb!.readInt8(this.bb_pos + offset) : PropertyType.Int8;
 }
 
 items(obj?:Items):Items|null {
@@ -50,7 +50,7 @@ static addName(builder:flatbuffers.Builder, nameOffset:flatbuffers.Offset) {
 }
 
 static addType(builder:flatbuffers.Builder, type:PropertyType) {
-  builder.addFieldInt8(1, type, PropertyType.Number);
+  builder.addFieldInt8(1, type, PropertyType.Int8);
 }
 
 static addItems(builder:flatbuffers.Builder, itemsOffset:flatbuffers.Offset) {
@@ -82,7 +82,7 @@ unpackTo(_o: propertyT): void {
 export class propertyT implements flatbuffers.IGeneratedObject {
 constructor(
   public name: string|Uint8Array|null = null,
-  public type: PropertyType = PropertyType.Number,
+  public type: PropertyType = PropertyType.Int8,
   public items: ItemsT|null = null
 ){}
 

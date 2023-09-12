@@ -1,6 +1,7 @@
 using bimrepo;
 
 using System;
+using System.Collections.Generic;
 
 public class Helper
 {
@@ -24,11 +25,24 @@ public class Helper
         return data;
     }
 
-    public static double GetNumber(ComponentT component)
+    public static Int32 GetInt32(ComponentT component)
     {
-        var data = Expect(component, ComponentDataType.Number);
-        return data.Num;
+        var data = Expect(component, ComponentDataType.Int32);
+        return data.Int32;
     }
+
+    public static float GetFloat32(ComponentT component)
+    {
+        var data = Expect(component, ComponentDataType.Float32);
+        return data.Float32;
+    }
+
+    public static List<byte> GetBlob(ComponentT component)
+    {
+        var data = Expect(component, ComponentDataType.Blob);
+        return data.Blob;
+    }
+
     public static bool GetBool(ComponentT component)
     {
         var data = Expect(component, ComponentDataType.Boolean);
@@ -78,11 +92,27 @@ public class Helper
         return p;
     }
 
-    public static ComponentDataT MakeNumber(double num)
+    public static ComponentDataT MakeInt32(Int32 num)
     {
         var p = new ComponentDataT();
-        p.Type = ComponentDataType.Number;
-        p.Num = num;
+        p.Type = ComponentDataType.Int32;
+        p.Int32 = num;
+        return p;
+    }
+
+    public static ComponentDataT MakeFloat32(float num)
+    {
+        var p = new ComponentDataT();
+        p.Type = ComponentDataType.Float32;
+        p.Float32 = num;
+        return p;
+    }
+
+    public static ComponentDataT MakeBlob(List<byte> blob)
+    {
+        var p = new ComponentDataT();
+        p.Type = ComponentDataType.Blob;
+        p.Blob = blob;
         return p;
     }
 

@@ -25,7 +25,7 @@ static getSizePrefixedRootAsItems(bb:flatbuffers.ByteBuffer, obj?:Items):Items {
 
 type():PropertyType {
   const offset = this.bb!.__offset(this.bb_pos, 4);
-  return offset ? this.bb!.readInt8(this.bb_pos + offset) : PropertyType.Number;
+  return offset ? this.bb!.readInt8(this.bb_pos + offset) : PropertyType.Int8;
 }
 
 static startItems(builder:flatbuffers.Builder) {
@@ -33,7 +33,7 @@ static startItems(builder:flatbuffers.Builder) {
 }
 
 static addType(builder:flatbuffers.Builder, type:PropertyType) {
-  builder.addFieldInt8(0, type, PropertyType.Number);
+  builder.addFieldInt8(0, type, PropertyType.Int8);
 }
 
 static endItems(builder:flatbuffers.Builder):flatbuffers.Offset {
@@ -61,7 +61,7 @@ unpackTo(_o: ItemsT): void {
 
 export class ItemsT implements flatbuffers.IGeneratedObject {
 constructor(
-  public type: PropertyType = PropertyType.Number
+  public type: PropertyType = PropertyType.Int8
 ){}
 
 

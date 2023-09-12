@@ -7,13 +7,23 @@ namespace bimrepo
 
 public enum ComponentDataType : sbyte
 {
-  Number = 1,
-  String = 2,
-  Boolean = 3,
-  ArrayStart = 4,
-  ArrayEnd = 5,
-  Ref = 6,
-  Empty = 7,
+  Int8 = 1,
+  Int16 = 2,
+  Int32 = 3,
+  Int64 = 4,
+  Uint8 = 5,
+  Uint16 = 6,
+  Uint32 = 7,
+  Uint64 = 8,
+  Float32 = 9,
+  Float64 = 10,
+  Blob = 11,
+  String = 12,
+  Boolean = 13,
+  ArrayStart = 14,
+  ArrayEnd = 15,
+  Ref = 16,
+  Empty = 17,
 };
 
 
