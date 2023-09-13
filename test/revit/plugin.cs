@@ -36,7 +36,7 @@ namespace IFC5
             });
         }
 
-        void GetGeometryComponentForElement(Document doc, Element el)
+        ifc2x3.geometry GetGeometryComponentForElement(Document doc, Element el)
         {
             var entity = GetElementUUID4(el);
 
@@ -81,6 +81,8 @@ namespace IFC5
                     }
                 }
             }
+
+            return geometryComponent;
         }
 
         void GetTransformComponentForElement(Document doc, Element el)
@@ -109,6 +111,10 @@ namespace IFC5
             classification.classification_name = el.Category.BuiltInCategory.ToString();
 
             ledger.update(classification);
+
+            var geometry = GetGeometryComponentForElement(doc, el);
+
+            ledger.update(geometry);
         }
 
         void ProcessDeletedElement(Document doc, Element el)

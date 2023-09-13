@@ -13,6 +13,14 @@ function DiffToString(diff: CommitDiffT)
     return `${diff.updatedComponents.length} / ${diff.updatedSchemas.length}`; 
 }
 
+function ResolveBigInt(obj) {
+    return JSON.parse(JSON.stringify(obj, (key, value) =>
+        typeof value === 'bigint'
+            ? value.toString()
+            : value // return everything else unchanged
+    ));
+}
+
 function RenderCommitHeader(ledger: string, commit: Commit)
 {
     return { ledger,
@@ -93,7 +101,7 @@ export default function init(app: Express, api: API)
         }
         else
         {
-            res.json(ledger.GetCommit(commitId));
+            res.json(ResolveBigInt(ledger.GetCommit(commitId)));
         }
     });
 
