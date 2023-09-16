@@ -1,10 +1,14 @@
 {
   "scripts": {
     "test": "esbuild test.ts --bundle  --platform=node --outfile=bundle.js --external:flatbuffers --external:axios --external:ws && node bundle.js",
-    "playground": "esbuild playground.ts --bundle  --platform=node --outfile=playground.js --external:flatbuffers --external:ws --external:axios && node playground.js"
+    "playground": "esbuild playground.ts --bundle  --platform=node --outfile=playground.js --external:flatbuffers --external:ws --external:axios && node playground.js",
+    "web": "esbuild web.ts --bundle --outfile=web.js --external:flatbuffers --external:ws --external:axios",
+    "watch": "chokidar \"**/*.ts\" -c \"npm run web\""
   },
   "dependencies": {
+    "@types/three": "^0.156.0",
     "axios": "^1.4.0",
+    "chokidar-cli": "^3.0.0",
     "cli-highlight": "^2.1.11",
     "dedent": "^0.7.0",
     "esbuild": "^0.18.11",
@@ -14,6 +18,7 @@
     "indent": "^0.0.2",
     "indent.js": "^0.3.5",
     "sha.js": "^2.4.11",
+    "three": "^0.156.1",
     "ws": "^8.13.0"
   },
   "devDependencies": {
