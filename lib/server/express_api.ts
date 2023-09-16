@@ -4,10 +4,14 @@ import { API, WSListener } from "./core/api";
 import express from "express";
 import presentation_api from "./api/presentation_api";
 import data_api from "./api/data_api";
+import cors from "cors";
 
 const wss = new ws.WebSocketServer({ noServer: true });
 const app = express()
 const port = 3000;
+
+
+app.use(cors());
 
 app.use(express.raw());
 

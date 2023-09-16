@@ -1,5 +1,7 @@
 import { ComponentIdentifierT, ComponentT, SchemaT, uuidv4T } from '../../schema/bimrepo';
-import * as crypto from "crypto";
+
+
+// import * as crypto from "crypto"; // node only
 
 export class Reference<T>
 {

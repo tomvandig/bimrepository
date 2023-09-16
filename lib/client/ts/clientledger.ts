@@ -3,7 +3,9 @@ import axios from "axios";
 import { ECSComponent } from "./ecs";
 import { CommitDiffT, CommitProposal, CommitProposalT, ComponentIdentifierT, ComponentT, uuidv4T } from "../../schema/bimrepo";
 import { CommitResponse, CommitResponseT } from "../../schema/bimrepo/commit-response";
-import WebSocket from 'ws';
+
+// uncomment for node
+//import WebSocket from 'ws';
 
 export class IServerLedger
 {
@@ -53,6 +55,7 @@ export class IServerLedger
         let response = await axios.get(`${this.GetURL()}/commit/${id}`, {
             responseType: "arraybuffer"
         });
+
         return toArrayBuffer(response.data);
     }
 
@@ -62,13 +65,16 @@ export class IServerLedger
     }
 }
 
-function toArrayBuffer(buffer) {
+function toArrayBuffer(buffer: ArrayBuffer) {
+    /* node
     const arrayBuffer = new ArrayBuffer(buffer.length);
     const view = new Uint8Array(arrayBuffer);
     for (let i = 0; i < buffer.length; ++i) {
       view[i] = buffer[i];
     }
     return view;
+    */
+    return new Uint8Array(buffer);
   }
 
 export default class ClientLedger {
