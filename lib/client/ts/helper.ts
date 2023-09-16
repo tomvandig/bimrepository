@@ -19,10 +19,22 @@ export function Expect(component: ComponentT, type: ComponentDataType, optional:
     return data;
 }
 
-export function GetNumber(component: ComponentT)
+export function GetInt32(component: ComponentT)
 {
-    let data = Expect(component, ComponentDataType.Number);
-    return data.num;
+    let data = Expect(component, ComponentDataType.Int32);
+    return data.int32;
+}
+
+export function GetFloat32(component: ComponentT)
+{
+    let data = Expect(component, ComponentDataType.Float32);
+    return data.float32;
+}
+
+export function GetBlob(component: ComponentT)
+{
+    let data = Expect(component, ComponentDataType.Blob);
+    return data.blob;
 }
 
 export function GetArrayStart(component: ComponentT)
@@ -74,11 +86,27 @@ export function MakeArrayEnd()
     return p;
 }
 
-export function MakeNumber(num: number)
+export function MakeInt32(num: number)
 {
     let p = new ComponentDataT();
-    p.type = ComponentDataType.Number;
-    p.num = num;
+    p.type = ComponentDataType.Int32;
+    p.int32 = num;
+    return p;
+}
+
+export function MakeFloat32(num: number)
+{
+    let p = new ComponentDataT();
+    p.type = ComponentDataType.Float32;
+    p.float32 = num;
+    return p;
+}
+
+export function MakeBlob(blob: number[])
+{
+    let p = new ComponentDataT();
+    p.type = ComponentDataType.Blob;
+    p.blob = blob;
     return p;
 }
 
