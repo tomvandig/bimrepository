@@ -56,6 +56,8 @@ namespace IFC5
 
                         var triangulation = face.Triangulate();
 
+                        int offsetForFace = geometryComponent.vertices.Count / 3;
+
                         foreach (var vert in triangulation.Vertices)
                         {
                             geometryComponent.vertices.Add((float)vert.X);
@@ -74,9 +76,9 @@ namespace IFC5
                         for (int j = 0; j < triangulation.NumTriangles; j++)
                         {
                             var tri = triangulation.get_Triangle(j);
-                            geometryComponent.indices.Add((int)tri.get_Index(0));
-                            geometryComponent.indices.Add((int)tri.get_Index(1));
-                            geometryComponent.indices.Add((int)tri.get_Index(2));
+                            geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(0));
+                            geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(1));
+                            geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(2));
                         }
                     }
                 }

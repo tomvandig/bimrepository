@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import Ledger, { IServerLedger } from '../../lib/client/ts/clientledger';
 import { ifc2x3 } from './schema_ts/ts/ifc2x3_geometry';
@@ -9,14 +10,24 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
+scene.background = new THREE.Color(255, 255, 255);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+const controls = new OrbitControls( camera, renderer.domElement );
+
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+const material = new THREE.MeshPhongMaterial( { color: 0x00ff00 } );
 const cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
-
+const directionalLight = new THREE.DirectionalLight( 0xffffff, 2);
+directionalLight.target = cube;
+directionalLight.translateX(1);
+directionalLight.translateY(1);
+directionalLight.translateZ(1);
+scene.add( directionalLight );
+const light = new THREE.AmbientLight( 0xA0A0A0 ); // soft white light
+scene.add( light );
 camera.position.z = 5;
 
 
@@ -46,6 +57,18 @@ ledger.SetNotifyHeadChanged(async (head: number) => {
         {
             let geometryComponent = ifc2x3.geometry.importFromDataArray(comp);
             console.log("geom", geometryComponent.vertices, geometryComponent.indices);
+
+            const geometry = new THREE.BufferGeometry();
+
+            let floats = new Float32Array(geometryComponent.vertices);
+            // itemSize = 3 because there are 3 values (components) per vertex
+            geometry.setAttribute( 'position', new THREE.BufferAttribute( floats, 3 ) );
+            geometry.setIndex(geometryComponent.indices);
+            geometry.computeVertexNormals();
+
+            const material = new THREE.MeshPhongMaterial( { color: 0xAAAAAA } );
+            const mesh = new THREE.Mesh( geometry, material );
+            scene.add(mesh);
         }
     })
 
@@ -53,9 +76,7 @@ ledger.SetNotifyHeadChanged(async (head: number) => {
 })
 
 function animate() {
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-
+	controls.update();
     requestAnimationFrame( animate );
 	renderer.render( scene, camera );
 }
