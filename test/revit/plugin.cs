@@ -36,6 +36,46 @@ namespace IFC5
             });
         }
 
+        void AddSolidToGeometryComponent(Transform transform, Document doc, Solid s, ifc2x3.geometry geometryComponent)
+        {
+            for (var i = 0; i < s.Faces.Size; i++)
+            {
+                var face = s.Faces.get_Item(i);
+
+                var triangulation = face.Triangulate();
+
+                if (transform != null)
+                {
+                    triangulation = triangulation.get_Transformed(transform);
+                }
+
+                int offsetForFace = geometryComponent.vertices.Count / 3;
+
+                foreach (var vert in triangulation.Vertices)
+                {
+                    geometryComponent.vertices.Add((float)vert.X);
+                    geometryComponent.vertices.Add((float)vert.Y);
+                    geometryComponent.vertices.Add((float)vert.Z);
+                }
+
+                if (false)
+                {
+                    var material = face.MaterialElementId;
+                    Material M = doc.GetElement(material) as Material;
+
+                    var col = M.Color;
+                }
+
+                for (int j = 0; j < triangulation.NumTriangles; j++)
+                {
+                    var tri = triangulation.get_Triangle(j);
+                    geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(0));
+                    geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(1));
+                    geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(2));
+                }
+            }
+        }
+
         ifc2x3.geometry GetGeometryComponentForElement(Document doc, Element el)
         {
             var entity = GetElementUUID4(el);
@@ -43,42 +83,29 @@ namespace IFC5
             var geometryComponent = new ifc2x3.geometry(entity);
 
             Options options = new Options();
-            var geom = el.get_Geometry(options);
+            var geom = el.get_Geometry(options).GetTransformed(Transform.Identity);
 
             foreach (var geompart in geom)
             {
                 Solid s = geompart as Solid;
                 if (s != null)
                 {
-                    for (var i = 0; i < s.Faces.Size; i++)
+                    AddSolidToGeometryComponent(null, doc, s, geometryComponent);
+                }
+
+                GeometryInstance instance = geompart as GeometryInstance;
+                if (instance != null)
+                {
+                    GeometryElement instanceGeometry = instance.GetInstanceGeometry();
+                    Transform t = instance.Transform;
+                    var transformedInstanceGeometry = instanceGeometry.GetTransformed(t);
+
+                    foreach (var nestedGeomPart in transformedInstanceGeometry)
                     {
-                        var face = s.Faces.get_Item(i);
-
-                        var triangulation = face.Triangulate();
-
-                        int offsetForFace = geometryComponent.vertices.Count / 3;
-
-                        foreach (var vert in triangulation.Vertices)
+                        Solid solid = nestedGeomPart as Solid;
+                        if (solid != null)
                         {
-                            geometryComponent.vertices.Add((float)vert.X);
-                            geometryComponent.vertices.Add((float)vert.Y);
-                            geometryComponent.vertices.Add((float)vert.Z);
-                        }
-
-                        if (false)
-                        {
-                            var material = face.MaterialElementId;
-                            Material M = doc.GetElement(material) as Material;
-
-                            var col = M.Color;
-                        }
-
-                        for (int j = 0; j < triangulation.NumTriangles; j++)
-                        {
-                            var tri = triangulation.get_Triangle(j);
-                            geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(0));
-                            geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(1));
-                            geometryComponent.indices.Add(offsetForFace + (int)tri.get_Index(2));
+                            AddSolidToGeometryComponent(null, doc, solid, geometryComponent);
                         }
                     }
                 }
