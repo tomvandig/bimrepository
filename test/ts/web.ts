@@ -76,12 +76,16 @@ async function NewHead(head: number)
                 const geometry = new THREE.BufferGeometry();
 
                 let floats = new Float32Array(geometryComponent.vertices);
+                let colors = new Float32Array(geometryComponent.colors);
+
                 // itemSize = 3 because there are 3 values (components) per vertex
                 geometry.setAttribute( 'position', new THREE.BufferAttribute( floats, 3 ) );
+                geometry.setAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
                 geometry.setIndex(geometryComponent.indices);
                 geometry.computeVertexNormals();
 
                 const material = new THREE.MeshPhongMaterial( { color: 0xAAAAAA } );
+                material.vertexColors = true;
                 const mesh = new THREE.Mesh( geometry, material );
                 scene.add(mesh);
             

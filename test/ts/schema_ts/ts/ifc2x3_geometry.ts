@@ -15,6 +15,12 @@
                 "type": "float32"
             }
         },
+        "colors": {
+            "type": "array",
+            "items": {
+                "type": "float32"
+            }
+        },
         "indices": {
             "type": "array",
             "items": {
@@ -34,11 +40,12 @@ export namespace ifc2x3 {
     export class geometry extends ECSComponent {
         
         constructor(id: UUID4) {
-            super("ifc2x3_geometry", "fec4de4b95647dfd11de476d88d556324318f83a0b0c865c3399080f7595934d", id);
+            super("ifc2x3_geometry", "aeaff9732fcac0be8d1220409fc19245d0afe3e7ebdcefc407d16fac48055925", id);
         }
         
         // properties
         vertices: number[] = [];
+        colors: number[] = [];
         indices: number[] = [];
         // end properties
         
@@ -55,6 +62,12 @@ export namespace ifc2x3 {
             // property vertices
             componentObj.data.push(helper.MakeArrayStart(this.vertices.length));
             this.vertices.forEach((item) => {
+                componentObj.data.push(helper.MakeFloat32(item));
+            });
+            componentObj.data.push(helper.MakeArrayEnd());
+            // property colors
+            componentObj.data.push(helper.MakeArrayStart(this.colors.length));
+            this.colors.forEach((item) => {
                 componentObj.data.push(helper.MakeFloat32(item));
             });
             componentObj.data.push(helper.MakeArrayEnd());
@@ -96,6 +109,21 @@ export namespace ifc2x3 {
             }
             
             
+            // property colors
+            {
+                let prop_colors = new propertyT();
+                
+                prop_colors.name = "colors";
+                prop_colors.type = PropertyType.Array;
+                
+                prop_colors.items = new ItemsT();
+                prop_colors.items.type = PropertyType.Float32;
+                
+                
+                schemaObj.schemaShape.properties.push(prop_colors);
+            }
+            
+            
             // property indices
             {
                 let prop_indices = new propertyT();
@@ -133,6 +161,19 @@ export namespace ifc2x3 {
                     for (let i = 0; i < count; i++)
                     {
                         obj.vertices.push(helper.GetFloat32(componentObj));
+                    }
+                    helper.Expect(componentObj, ComponentDataType.ArrayEnd);
+                    
+                }
+                
+                
+                // property colors
+                {
+                    
+                    let count = helper.GetArrayStart(componentObj);
+                    for (let i = 0; i < count; i++)
+                    {
+                        obj.colors.push(helper.GetFloat32(componentObj));
                     }
                     helper.Expect(componentObj, ComponentDataType.ArrayEnd);
                     

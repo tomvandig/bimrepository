@@ -51,19 +51,26 @@ namespace IFC5
 
                 int offsetForFace = geometryComponent.vertices.Count / 3;
 
+                Color c = new Color(255, 255, 255);
+
+                {
+                    var material = face.MaterialElementId;
+                    Material M = doc.GetElement(material) as Material;
+                    if (M != null)
+                    {
+                        c = M.Color;
+                    }
+                }
+
                 foreach (var vert in triangulation.Vertices)
                 {
                     geometryComponent.vertices.Add((float)vert.X);
                     geometryComponent.vertices.Add((float)vert.Y);
                     geometryComponent.vertices.Add((float)vert.Z);
-                }
 
-                if (false)
-                {
-                    var material = face.MaterialElementId;
-                    Material M = doc.GetElement(material) as Material;
-
-                    var col = M.Color;
+                    geometryComponent.colors.Add((float)c.Red / 255.0f);
+                    geometryComponent.colors.Add((float)c.Green / 255.0f);
+                    geometryComponent.colors.Add((float)c.Blue / 255.0f);
                 }
 
                 for (int j = 0; j < triangulation.NumTriangles; j++)

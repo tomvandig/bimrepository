@@ -10,6 +10,12 @@
                 "type": "float32"
             }
         },
+        "colors": {
+            "type": "array",
+            "items": {
+                "type": "float32"
+            }
+        },
         "indices": {
             "type": "array",
             "items": {
