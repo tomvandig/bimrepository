@@ -46,6 +46,8 @@ function ResolveBigInt(obj) {
 
 const GEOM_TYPE_HASH = new ifc2x3.geometry(new UUID4()).getTypeHash();
 
+let entityToGeom = new Map<string, THREE.Object3D>();
+
 let previousReceivedCommit = -1;
 async function NewHead(head: number)
 {
@@ -58,8 +60,18 @@ async function NewHead(head: number)
         components?.forEach((comp) => {
             if (comp.id?.typeHash === GEOM_TYPE_HASH)
             {
+
                 let geometryComponent = ifc2x3.geometry.importFromDataArray(comp);
                 console.log("geom", geometryComponent.vertices, geometryComponent.indices);
+
+                // remove existing geom if exists
+                let entityString = geometryComponent.getEntityID().bytes.toString();
+                if (entityToGeom.has(entityString))
+                {
+                    let obj = entityToGeom.get(entityString);
+                    scene.remove(obj!);
+                    entityToGeom.delete(entityString);
+                }
 
                 const geometry = new THREE.BufferGeometry();
 
@@ -72,6 +84,8 @@ async function NewHead(head: number)
                 const material = new THREE.MeshPhongMaterial( { color: 0xAAAAAA } );
                 const mesh = new THREE.Mesh( geometry, material );
                 scene.add(mesh);
+            
+                entityToGeom.set(entityString, mesh);
             }
         })
 
