@@ -28,7 +28,7 @@ directionalLight.translateZ(1);
 scene.add( directionalLight );
 const light = new THREE.AmbientLight( 0xA0A0A0 ); // soft white light
 scene.add( light );
-camera.position.z = 5;
+camera.position.z = 50;
 
 
 
@@ -46,34 +46,46 @@ function ResolveBigInt(obj) {
 
 const GEOM_TYPE_HASH = new ifc2x3.geometry(new UUID4()).getTypeHash();
 
+let previousReceivedCommit = -1;
+async function NewHead(head: number)
+{
+    for (let commitID = previousReceivedCommit + 1; commitID <= head; commitID++)
+    {
+        let commit = await ledger.GetCommit(commitID);
+
+        let components = commit.diff?.updatedComponents;
+
+        components?.forEach((comp) => {
+            if (comp.id?.typeHash === GEOM_TYPE_HASH)
+            {
+                let geometryComponent = ifc2x3.geometry.importFromDataArray(comp);
+                console.log("geom", geometryComponent.vertices, geometryComponent.indices);
+
+                const geometry = new THREE.BufferGeometry();
+
+                let floats = new Float32Array(geometryComponent.vertices);
+                // itemSize = 3 because there are 3 values (components) per vertex
+                geometry.setAttribute( 'position', new THREE.BufferAttribute( floats, 3 ) );
+                geometry.setIndex(geometryComponent.indices);
+                geometry.computeVertexNormals();
+
+                const material = new THREE.MeshPhongMaterial( { color: 0xAAAAAA } );
+                const mesh = new THREE.Mesh( geometry, material );
+                scene.add(mesh);
+            }
+        })
+
+        console.log(`fetched commit ${commitID}`);
+    }
+
+    previousReceivedCommit = head;
+}
+
 ledger.SetNotifyHeadChanged(async (head: number) => {
-
-    let commit = await ledger.GetCommit(head);
-
-    let components = commit.diff?.updatedComponents;
-
-    components?.forEach((comp) => {
-        if (comp.id?.typeHash === GEOM_TYPE_HASH)
-        {
-            let geometryComponent = ifc2x3.geometry.importFromDataArray(comp);
-            console.log("geom", geometryComponent.vertices, geometryComponent.indices);
-
-            const geometry = new THREE.BufferGeometry();
-
-            let floats = new Float32Array(geometryComponent.vertices);
-            // itemSize = 3 because there are 3 values (components) per vertex
-            geometry.setAttribute( 'position', new THREE.BufferAttribute( floats, 3 ) );
-            geometry.setIndex(geometryComponent.indices);
-            geometry.computeVertexNormals();
-
-            const material = new THREE.MeshPhongMaterial( { color: 0xAAAAAA } );
-            const mesh = new THREE.Mesh( geometry, material );
-            scene.add(mesh);
-        }
-    })
-
-    console.log(`fetched commit ${head}`);
-})
+    // TODO: fix, apparently head is a string here
+    //@ts-ignore
+    NewHead(parseInt(head ));
+});
 
 function animate() {
 	controls.update();
