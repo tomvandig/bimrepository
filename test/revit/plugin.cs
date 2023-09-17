@@ -138,7 +138,9 @@ namespace IFC5
 
         void ProcessModifiedElement(Document doc, Element el)
         {
+            var geometry = GetGeometryComponentForElement(doc, el);
 
+            ledger.update(geometry);
         }
 
         public async void application_DocumentChanged(object sender, DocumentChangedEventArgs args)
