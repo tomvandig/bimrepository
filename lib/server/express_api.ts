@@ -13,7 +13,7 @@ const port = 3000;
 
 app.use(cors());
 
-app.use(express.raw());
+app.use(express.raw({limit: "50mb"}));
 
 let api = new API();
 
