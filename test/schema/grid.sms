@@ -1,0 +1,66 @@
+
+namespace ifc2x3
+{
+    export class Grid
+    {
+
+    }
+
+    export class GridPosition{
+        entity: number;
+    };
+    export class Position3D{
+        entity: number;
+    };
+}
+
+{
+    $id: ["ifc2x3", "grid"];
+    $schemaversion: "1";
+    $comment: "";
+    description: "Logical IFC Grid";
+    shape: {
+        v1: {
+            xaxes: {
+                type: "array";
+                items: {
+                    type: {
+
+                    };
+                };
+            };
+        };
+    };
+    validate: (geom: ifc2x3.Grid) => {
+        return false;
+    };
+    update: {
+        UpdateGridObjects: (context: Context, grid: ifc2x3.Grid) =>
+        {   
+            let result = new ECSResult();
+
+            let connectedObjects = context.GetHasRelationShipWith<ifc2x3.GridPosition>(grid).map((rel) => rel.entity);
+
+            function ConvertToGridPosition(obj: ifc2x3.GridPosition)
+            {
+                return { entity: obj.entity } as ifc2x3.Position3D;
+            }
+
+            connectedObjects.forEach((obj) => {
+                let positionOnGrid = context.GetComponent<ifc2x3.GridPosition>(obj);
+                let newPosition3D = ConvertToGridPosition(positionOnGrid);
+
+                // only results in update if data has changed
+                result.UpdateComponentIfDataChanged(newPosition3D);
+            });
+
+            return result;
+        }   
+    };
+    upgrade: {
+        v1: (context: Context, grid: ifc2x3.Grid) => 
+        {
+            
+        }
+    }
+}

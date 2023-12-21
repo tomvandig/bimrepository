@@ -20,6 +20,26 @@ namespace IFC5
     public class LedgerPlugin : IExternalCommand
     {
         ClientLedger ledger;
+        bool initialized = false;
+
+        IList<Element> GetAllModelElements(Document doc)
+        {
+            List<Element> elements = new List<Element>();
+
+            FilteredElementCollector collector
+              = new FilteredElementCollector(doc)
+                .WhereElementIsNotElementType();
+
+            foreach (Element e in collector)
+            {
+                if (null != e.Category
+                  && e.Category.HasMaterialQuantities)
+                {
+                    elements.Add(e);
+                }
+            }
+            return elements;
+        }
 
         public void setup(UIApplication application)
         {
@@ -52,6 +72,7 @@ namespace IFC5
                 int offsetForFace = geometryComponent.vertices.Count / 3;
 
                 Color c = new Color(255, 255, 255);
+                float transparency = 1;
 
                 {
                     var material = face.MaterialElementId;
@@ -59,6 +80,7 @@ namespace IFC5
                     if (M != null)
                     {
                         c = M.Color;
+                        transparency = M.Transparency;
                     }
                 }
 
@@ -71,6 +93,7 @@ namespace IFC5
                     geometryComponent.colors.Add((float)c.Red / 255.0f);
                     geometryComponent.colors.Add((float)c.Green / 255.0f);
                     geometryComponent.colors.Add((float)c.Blue / 255.0f);
+                    geometryComponent.colors.Add((float)transparency);
                 }
 
                 for (int j = 0; j < triangulation.NumTriangles; j++)
@@ -90,7 +113,14 @@ namespace IFC5
             var geometryComponent = new ifc2x3.geometry(entity);
 
             Options options = new Options();
-            var geom = el.get_Geometry(options).GetTransformed(Transform.Identity);
+            var geom = el.get_Geometry(options);
+            
+            if (geom == null)
+            {
+                return geometryComponent;
+            }
+
+            geom = geom.GetTransformed(Transform.Identity);
 
             foreach (var geompart in geom)
             {
@@ -146,11 +176,15 @@ namespace IFC5
 
             classification.classification_name = el.Category.BuiltInCategory.ToString();
 
-            ledger.update(classification);
 
             var geometry = GetGeometryComponentForElement(doc, el);
 
-            ledger.update(geometry);
+            if (geometry.vertices.Count > 0)
+            {
+                ledger.update(classification);
+
+                ledger.update(geometry);
+            }
         }
 
         void ProcessDeletedElement(Document doc, Element el)
@@ -180,9 +214,22 @@ namespace IFC5
         public async void application_DocumentChanged(object sender, DocumentChangedEventArgs args)
         {
             Debug.WriteLine($"Doc changed");
+
+
             try
             {
                 Document doc = args.GetDocument();
+                
+                if (!initialized)
+                {
+                    var elements = this.GetAllModelElements(doc);
+
+                    foreach (var element in elements ) { 
+                        this.ProcessAddedElement(doc, element);
+                    }
+
+                    initialized = true;
+                }
 
                 foreach (var id in args.GetAddedElementIds())
                 {
@@ -215,6 +262,7 @@ namespace IFC5
 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+            initialized = false;
             this.setup(commandData.Application);
 
             return Result.Succeeded;

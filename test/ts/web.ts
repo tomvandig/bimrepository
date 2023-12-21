@@ -80,7 +80,7 @@ async function NewHead(head: number)
 
                 // itemSize = 3 because there are 3 values (components) per vertex
                 geometry.setAttribute( 'position', new THREE.BufferAttribute( floats, 3 ) );
-                geometry.setAttribute( 'color', new THREE.BufferAttribute( colors, 3 ) );
+                geometry.setAttribute( 'color', new THREE.BufferAttribute( colors, 4 ) );
                 geometry.setIndex(geometryComponent.indices);
                 geometry.computeVertexNormals();
 
